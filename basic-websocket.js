@@ -20,7 +20,7 @@ new (function() {
     ext.connect = function(ipaddr, nodename) {
 	    addr_name[ipaddr] = nodename;
 	    name_addr[nodename] = ipaddr;
-	    ws_conn[ipaddr] = new WebSocket(ipaddr);
+	    ws_conn[ipaddr] = new WebSocket('ws://' + ipaddr);
     };
 
     ext.send = function(data, node) {
