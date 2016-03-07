@@ -2,7 +2,7 @@
 /* Sayamindu Dasgupta <sayamindu@media.mit.edu>, May 2014 */
 
 new (function() {
-    var ext = this;
+	var ext = this;
 
     var addr_name = {};
     var name_addr = {};
@@ -38,16 +38,16 @@ new (function() {
     ext.onMessageReceived = function(destHost) {
 	    if(ws_conn[destHost].message_received) {
 	    	ws_conn[destHost].message_received = false;
-		return true;
+			return true;
 	    }
 	    return false;
     };
 
     ext.getMessage = function(destHost) {
 	    if(ws_conn[destHost].message) {
-	    	var ret = ws_conn[destHost].message;
+	    	var ret = ws_conn[destHost].message.data;
 	    	ws_conn[destHost].message = null;
-		return ret;
+			return ret;
 	    }
 	    return "";
     };
@@ -58,7 +58,7 @@ new (function() {
             ['', 'connect to Host:%s', 'connect'],
             ['', 'send %s to %s', 'send'],
             ['h', 'when message receive from %s', 'onMessageReceived'],
-	    ['r', 'message from %s', 'getMessage']
+			['r', 'message from %s', 'getMessage']
         ]
     };
 
