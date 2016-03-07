@@ -27,6 +27,7 @@ new (function() {
         };
 
         ws.message_received = false;
+        ws.message = null;
 
         ws_conn[destHost] = ws;
     };
@@ -44,7 +45,7 @@ new (function() {
     };
 
     ext.getMessage = function(destHost) {
-        if(ws_conn[destHost].message) {
+        if(ws_conn[destHost].message != null) {
             var ret = ws_conn[destHost].message.data;
             ws_conn[destHost].message = null;
             return ret;
@@ -55,7 +56,7 @@ new (function() {
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['', 'connect to Host:%s', 'connect'],
+            ['', 'connect to %s', 'connect'],
             ['', 'send %s to %s', 'send'],
             ['h', 'when data received from %s', 'onMessageReceived'],
             ['r', 'data from %s', 'getMessage']
