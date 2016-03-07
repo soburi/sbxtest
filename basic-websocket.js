@@ -25,6 +25,7 @@ new (function() {
 
         var ws = new WebSocket('ws://' + destHost);
         ws.onerror = function(err) {
+                console.log('Error:' + err);
         };
 
         ws.onmessage = function(msg) {
