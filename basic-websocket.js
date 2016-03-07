@@ -17,6 +17,10 @@ new (function() {
     };
 
     ext.connect = function(destHost) {
+        if(destHost in ws_conn) {
+		ws_conn[destHost].close();
+	}
+
         var ws = new WebSocket('ws://' + destHost);
         ws.onerror = function(err) {
         };
