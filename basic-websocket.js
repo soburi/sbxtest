@@ -40,11 +40,13 @@ new (function() {
     };
 
     ext.send = function(data, destHost) {
-        ws_conn[destHost].send(data);
+        if(destHost in ws_conn) {
+            ws_conn[destHost].send(data);
+        }
     };
 
     ext.onMessageReceived = function(destHost) {
-        if(ws_conn[destHost].message_received) {
+        if(destHost in ws_conn && ws_conn[destHost].message_received) {
             ws_conn[destHost].message_received = false;
             return true;
         }
@@ -52,7 +54,7 @@ new (function() {
     };
 
     ext.getMessage = function(destHost) {
-        if(ws_conn[destHost].message != null) {
+        if(destHost in ws_conn && ws_conn[destHost].message != null) {
             var ret = ws_conn[destHost].message.data;
             ws_conn[destHost].message = null;
             return ret;
