@@ -23,20 +23,26 @@ new (function() {
                 }
         }
 
-        var ws = new WebSocket('ws://' + destHost);
-        ws.onerror = function(err) {
-                console.log('Error:' + err);
-        };
+        try {
+                var ws = new WebSocket('ws://' + destHost);
+                ws.onerror = function(err) {
+                        console.log('Error:' + err);
+                };
 
-        ws.onmessage = function(msg) {
-            ws.message_received = true;
-            ws.message = msg;
-        };
+                ws.onmessage = function(msg) {
+                    ws.message_received = true;
+                    ws.message = msg;
+                };
 
-        ws.message_received = false;
-        ws.message = null;
+                ws.message_received = false;
+                ws.message = null;
 
-        ws_conn[destHost] = ws;
+                ws_conn[destHost] = ws;
+        }
+        catch(e) {
+                console.log('Catch:' + e);
+                throw "XXX";
+        }
     };
 
     ext.send = function(data, destHost) {
