@@ -18,8 +18,12 @@ new (function() {
 
     ext.connect = function(destHost) {
         if(destHost in ws_conn) {
-                if(ws_conn[destHost].readyState == 1) {
-                        ws_conn[destHost].close();
+                switch(ws_conn[destHost].readyState) {
+                        case 0:
+                        case 1:
+                                return;
+                        default:
+                                //fall through
                 }
         }
 
