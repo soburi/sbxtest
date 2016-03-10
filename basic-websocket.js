@@ -63,6 +63,28 @@ new (function() {
         return false;
     };
 
+    ext.onMessageReceivedAny = function(destHost) {
+        for(k in ws_conn) {
+                if(ws_conn[k].message != null) {
+                        return true;
+                }
+        }
+        return false;
+    };
+
+    ext.getSender = function() {
+        for(k in ws_conn) {
+                if(ws_conn[k].message != null) {
+                        return k;
+                }
+        }
+        return null;
+    };
+
+    ext.testcall = function(arg) {
+            console.log(arg);
+    };
+
     ext.getMessage = function(destHost) {
         if(destHost in ws_conn && ws_conn[destHost].message != null) {
             var ret = ws_conn[destHost].message.data;
@@ -78,6 +100,8 @@ new (function() {
             ['', 'connect to %s', 'connect'],
             ['', 'send %s to %s', 'send'],
             ['h', 'when data received from %s', 'onMessageReceived'],
+            ['h', 'when data received', 'onMessageReceivedAny'],
+            ['r', 'receive from', 'getSender'],
             ['r', 'data from %s', 'getMessage']
         ]
     };
