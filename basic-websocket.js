@@ -103,7 +103,7 @@ new (function() {
             ['h', 'when data received from %s', 'onMessageReceived'],
             ['h', 'when data received', 'onMessageReceivedAny'],
             ['r', 'receive from', 'getSender'],
-            ['r', 'data from %s', 'getMessage']
+            ['r', 'data from %s', 'getMessage'],
             ['r', 'testcall %s', 'testcall']
         ]
     };
