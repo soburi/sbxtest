@@ -63,7 +63,7 @@ new (function() {
         return false;
     };
 
-    ext.onMessageReceivedAny = function(destHost) {
+    ext.onMessageReceivedAny = function() {
         for(k in ws_conn) {
                 if(ws_conn[k].message != null) {
                         return true;
@@ -83,6 +83,7 @@ new (function() {
 
     ext.testcall = function(arg) {
             console.log(arg);
+            return arg;
     };
 
     ext.getMessage = function(destHost) {
@@ -103,6 +104,7 @@ new (function() {
             ['h', 'when data received', 'onMessageReceivedAny'],
             ['r', 'receive from', 'getSender'],
             ['r', 'data from %s', 'getMessage']
+            ['r', 'testcall %s', 'testcall']
         ]
     };
 
