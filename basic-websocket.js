@@ -96,8 +96,8 @@ new (function() {
 
     
     ext.onMessageReceivedAny = function() {
-        if(last_message_flag == true) {
-            last_message_flag = false;
+        if(message_received == true) {
+            message_received = false;
             return true;
         }
         return false;
