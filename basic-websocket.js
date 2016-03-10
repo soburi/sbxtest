@@ -8,7 +8,11 @@ new (function() {
     var ws_conn = {};
 
     // Cleanup function when the extension is unloaded
-    ext._shutdown = function() {};
+    ext._shutdown = function() {
+        for(k in ws_conn) {
+            ws_conn[k].close();
+        }
+    };
 
     // Status reporting code
     // Use this to report missing hardware, plugin or unsupported browser
@@ -18,34 +22,44 @@ new (function() {
 
     ext.connect = function(destHost) {
         if(destHost in ws_conn) {
-                switch(ws_conn[destHost].readyState) {
-                        case 0:
-                        case 1:
-                                return;
-                        default:
-                                //fall through
-                }
+            switch(ws_conn[destHost].readyState) {
+                case 0:
+                case 1:
+                    return;
+                default:
+                    //fall through
+            }
         }
 
         try {
-                var ws = new WebSocket('ws://' + destHost);
-                ws.onerror = function(err) {
-                        console.log('Error:' + err);
-                };
-
-                ws.onmessage = function(msg) {
-                    ws.message_received = true;
-                    ws.message = msg;
-                };
-
-                ws.message_received = false;
-                ws.message = null;
-
-                ws_conn[destHost] = ws;
+            var ws = new WebSocket('ws://' + destHost);
+            ws.onerror = function(err) {
+                console.log('Error:' + err);
+            };
+            
+            ws.onmessage = function(msg) {
+                ws.message_received = true;
+                ws.message = msg;
+            };
+            
+            ws.message_received = false;
+            ws.message = null;
+            
+            ws_conn[destHost] = ws;
         }
         catch(e) {
-                console.log('Catch:' + e);
-                throw "XXX";
+            console.log('Catch:' + e);
+            throw "XXX";
+        }
+    };
+
+    ext.disconnect = function(destHost) {
+        if(destHost in ws_conn) {
+            switch(ws_conn[destHost].readyState) {
+                case 0:
+                case 1:
+                ws_conn[destHost].close();
+            }
         }
     };
 
@@ -63,6 +77,16 @@ new (function() {
         return false;
     };
 
+    ext.getMessage = function(destHost) {
+        if(destHost in ws_conn && ws_conn[destHost].message != null) {
+            var ret = ws_conn[destHost].message.data;
+            ws_conn[destHost].message = null;
+            return ret;
+        }
+        return "";
+    };
+
+    /*
     ext.onMessageReceivedAny = function() {
         for(k in ws_conn) {
                 if(ws_conn[k].message != null) {
@@ -85,26 +109,19 @@ new (function() {
             console.log(arg);
             return arg;
     };
+    */
 
-    ext.getMessage = function(destHost) {
-        if(destHost in ws_conn && ws_conn[destHost].message != null) {
-            var ret = ws_conn[destHost].message.data;
-            ws_conn[destHost].message = null;
-            return ret;
-        }
-        return "";
-    };
-   
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
             ['', 'connect to %s', 'connect'],
+            ['', 'disconnect %s', 'disconnect'],
             ['', 'send %s to %s', 'send'],
             ['h', 'when data received from %s', 'onMessageReceived'],
-            ['h', 'when data received', 'onMessageReceivedAny'],
-            ['r', 'receive from', 'getSender'],
             ['r', 'data from %s', 'getMessage'],
-            ['r', 'testcall %s', 'testcall']
+            //['h', 'when data received', 'onMessageReceivedAny'],
+            //['r', 'receive from', 'getSender'],
+            //['r', 'testcall %s', 'testcall']
         ]
     };
 
