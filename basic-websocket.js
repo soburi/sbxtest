@@ -4,9 +4,7 @@
 new (function() {
     var ext = this;
 
-    var addr_name = {};
     var ws_conn = {};
-
     var last_message = null;
     var message_received = false;
 
@@ -72,16 +70,6 @@ new (function() {
         }
     };
 
-    /*
-    ext.onMessageReceived = function(_url) {
-        if(_url in ws_conn && ws_conn[_url].message_received) {
-            ws_conn[_url].message_received = false;
-            return true;
-        }
-        return false;
-    };
-    */
-
     ext.getMessage = function(_url) {
         if(_url in ws_conn && ws_conn[_url].message != null) {
             var ret = ws_conn[_url].message.data;
@@ -94,15 +82,12 @@ new (function() {
         return null;
     };
 
-    
-    ext.onMessageReceivedAny = function() {
-        if(message_received == true) {
-            message_received = false;
-            return true;
-        }
-        return false;
+    ext.getLastReceivedMessage = function() {
+	var tmp = last_message;
+	last_message = null;
+	return tmp;
     };
-
+    
     ext.getMessageOrigin = function() {
         if(last_message != null) {
             return last_message.origin;
@@ -110,12 +95,13 @@ new (function() {
         return null;
     };
 
-    /*
-    ext.testcall = function(arg) {
-            console.log(arg);
-            return arg;
+    ext.onMessageReceived = function() {
+        if(message_received == true) {
+            message_received = false;
+            return true;
+        }
+        return false;
     };
-    */
 
     // Block and block menu descriptions
     var descriptor = {
@@ -123,11 +109,10 @@ new (function() {
             [ '', 'connect to %s', 'connect'],
             [ '', 'disconnect %s', 'disconnect'],
             [ '', 'send %s to %s', 'send'],
-            ['r', 'get message from %s', 'getMessage'],
+            ['r', 'message from %s', 'getMessage'],
+            ['r', 'last received message', 'getLastReceivedMessage'],
             ['r', 'message origin', 'getMessageOrigin'],
-            ['h', 'when data received', 'onMessageReceivedAny'],
-            //['h', 'when data received from %s', 'onMessageReceived'],
-            //['r', 'testcall %s', 'testcall']
+            ['h', 'when data received', 'onMessageReceived'],
         ]
     };
 
