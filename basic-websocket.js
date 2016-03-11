@@ -141,7 +141,8 @@ new (function() {
             ['h', 'when data received', 'onMessageReceived'],
 
             ['r', 'JSON', 'emptyObject'],
-            ['r', 'add %s:%s to %s', 'addJsonProperty'],
+            ['r', 'add string %s:%s to %s', 'addJsonProperty'],
+            ['r', 'add number %s:%n to %s', 'addJsonProperty'],
             ['r', 'get %s from %s', 'getJsonProperty'],
         ]
     };
