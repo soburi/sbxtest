@@ -109,7 +109,7 @@ new (function() {
         }
 
         jsonobj[propname] = propvalue;
-        return jsonobj;
+        return JSON.stringify(jsonobj);
     };
 
     ext.getJsonProperty = function(jsonstr, propname) {
