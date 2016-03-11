@@ -1,6 +1,3 @@
-/* Extension demonstrating a hat block */
-/* Sayamindu Dasgupta <sayamindu@media.mit.edu>, May 2014 */
-
 new (function() {
     var ext = this;
 
@@ -8,15 +5,12 @@ new (function() {
     var last_message = null;
     var message_received = false;
 
-    // Cleanup function when the extension is unloaded
     ext._shutdown = function() {
         for(k in ws_conn) {
             ws_conn[k].close();
         }
     };
 
-    // Status reporting code
-    // Use this to report missing hardware, plugin or unsupported browser
     var status_ = {status: 2, msg: 'Ready'};
     ext._getStatus = function() {
         return status_;
@@ -88,7 +82,7 @@ new (function() {
 	return tmp;
     };
     
-    ext.getMessageOrigin = function() {
+    ext.getLastReceivedMessageOrigin = function() {
         if(last_message != null) {
             return last_message.origin;
         }
@@ -103,6 +97,38 @@ new (function() {
         return false;
     };
 
+    ext.emptyObject = function() {
+        var obj = new Object();
+        return JSON.stringify(obj);
+    };
+
+    ext.addJsonProperty = function(propname, propvalue, jsonstr) {
+        var jsonobj = jsonstr;
+        if(jQuery.type(jsonstr) == 'string') {
+            jsonobj = JSON.parse(jsonstr);
+        }
+
+        jsonobj[propname] = propvalue;
+        return jsonobj;
+    };
+
+    ext.getJsonProperty = function(jsonstr, propname) {
+        var jsonobj = jsonstr;
+        if(jQuery.type(jsonstr) == 'string') {
+            jsonobj = JSON.parse(jsonstr);
+        }
+
+        if(propname in jsonobj) {
+            if( jQuery.type(jsonobj[propname]) == 'object') {
+                return JSON.stringify(jsonobj[propname]);
+            }
+            else {
+                return jsonobj[propname];
+            }
+        }
+        return null;
+    };
+
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
@@ -110,9 +136,13 @@ new (function() {
             [ '', 'disconnect %s', 'disconnect'],
             [ '', 'send %s to %s', 'send'],
             ['r', 'message from %s', 'getMessage'],
+            ['r', 'message origin', 'getLastReceivedMessageOrigin'],
             ['r', 'last received message', 'getLastReceivedMessage'],
-            ['r', 'message origin', 'getMessageOrigin'],
             ['h', 'when data received', 'onMessageReceived'],
+
+            ['r', 'JSON', 'emptyObject'],
+            ['r', 'add %s:%s to %s' 'addJsonProperty'],
+            ['r', 'get %s from %s' 'getJsonProperty'],
         ]
     };
 
