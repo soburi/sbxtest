@@ -30,7 +30,8 @@ new (function() {
         try {
             var ws = new WebSocket(_url);
             ws.onerror = function(err) {
-                console.log('Error:' + err);
+                status_.status = 1;
+                status_.msg = 'onerror: ' + err.toString();
             };
             
             ws.onmessage = function(msg) {
@@ -43,8 +44,8 @@ new (function() {
             ws_conn[_url] = ws;
         }
         catch(e) {
-            console.log('Catch:' + e);
-            throw "XXX";
+            status_.status = 1;
+            status_.msg = 'exception: ' + e.toString();
         }
     };
 
