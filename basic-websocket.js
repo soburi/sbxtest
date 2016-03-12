@@ -30,6 +30,8 @@ new (function() {
         var reason = "";
         try {
             var ws = new WebSocket(_url);
+            ws.message = null;
+            ws_conn[_url] = ws;
 
             ws.onmessage = function(msg) {
                 message_received = true;
@@ -79,12 +81,10 @@ new (function() {
                 status_.msg = 'onerror: ' + reason;
             };
             
-            ws.message = null;
-            ws_conn[_url] = ws;
         }
         catch(e) {
             status_.status = 1;
-            status_.msg = 'exception: ' + e.toString();
+            status_.msg = 'exception: ' + reason;
         }
     };
 
@@ -117,9 +117,9 @@ new (function() {
     };
 
     ext.getLastReceivedMessage = function() {
-	var tmp = last_message;
-	last_message = null;
-	return tmp;
+        var tmp = last_message;
+        last_message = null;
+        return tmp;
     };
     
     ext.getLastReceivedMessageOrigin = function() {
