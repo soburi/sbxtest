@@ -143,7 +143,7 @@ new (function() {
             ['r', 'JSON', 'emptyObject'],
             ['r', 'add string %s:%s to %s', 'addJsonProperty'],
             ['r', 'add number %s:%n to %s', 'addJsonProperty'],
-            ['r', 'get %s from %s', 'getJsonProperty'],
+            ['r', 'get property:%s from JSON:%s', 'getJsonProperty'],
         ]
     };
 
