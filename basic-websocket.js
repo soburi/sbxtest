@@ -67,6 +67,11 @@ new (function() {
                     reason = "The connection was closed due to a failure to perform a TLS handshake (e.g., the server certificate can't be verified).";
                 else
                     reason = "Unknown reason";
+
+                if(event.code != 1000) {
+                    status_.status = 1;
+                    status_.msg = 'onerror: ' + reason;
+                }
             };
 
             ws.onerror = function(err) {
