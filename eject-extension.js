@@ -9,7 +9,9 @@ new (function() {
         var ret = this[_k];
         if(ret == undefined) {
             for(var kk in this) {
+                if(kk.indexOf('://') != -1) {
                 return this[kk];
+                }
             }
         }
         return ret;
