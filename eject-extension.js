@@ -192,7 +192,7 @@ new (function() {
 
     ext.onDiskEjected = function() {
         var ws = ws_conn.get_(null);
-        if(ws.message.data == 'ejected' && ws.message.onDiscEjectedCheck != true) {
+        if(JSON.parse(ws.message.data).command == 'ejected' && ws.message.onDiscEjectedCheck != true) {
             ws.message.onDiscEjectedCheck = true;
             return true;
         }
@@ -201,7 +201,7 @@ new (function() {
 
     ext.onDriveClosed = function() {
         var ws = ws_conn.get_(null);
-        if(ws.message.data == 'closed' && ws.message.onDriveClosedCheck != true) {
+        if(JSON.parse(ws.message.data).command == 'closed' && ws.message.onDriveClosedCheck != true) {
             ws.message.onDriveClosedCheck = true;
             return true;
         }
