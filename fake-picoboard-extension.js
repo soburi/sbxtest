@@ -205,14 +205,14 @@ new (function() {
         var ws = ws_conn.get_(null);
 
 		if( ws.r_block_listener == undefined) {
-			ws.addEventListener('message', function(message) {
+			ws.r_block_listener = function(message) {
 				if(ws.r_block_callback_ != undefined) {
 					var resp = JSON.parse(message.data);
 					ws.r_block_callback_(message);
 					ws.r_block_callback_ = undefined;
 				}
 			});
-			ws.r_block_listener = true;
+			ws.addEventListener('message', ws.r_block_listener);
 		}
 
         var req = {request: stype};
