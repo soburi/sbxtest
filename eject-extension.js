@@ -85,7 +85,7 @@ new (function() {
 
                 if(event.code != 1000) {
                     status_.status = 1;
-                    status_.msg = url_ + ': ' + reason;
+                    status_.msg = _url + ': ' + reason;
                     event.target.close_status_ = event.code;
                     event.target.close_reason_ = reason;
                 }
@@ -117,7 +117,7 @@ new (function() {
         }
         catch(e) {
             status_.status = 1;
-            status_.msg = url_ + ' exception: ' + e.message;
+            status_.msg = _url + ' exception: ' + e.message;
         }
     };
 
