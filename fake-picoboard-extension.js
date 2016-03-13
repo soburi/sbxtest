@@ -211,7 +211,7 @@ new (function() {
 					ws.r_block_callback_(message);
 					ws.r_block_callback_ = undefined;
 				}
-			});
+			};
 			ws.addEventListener('message', ws.r_block_listener);
 		}
 
