@@ -85,8 +85,11 @@ new (function() {
 
                 if(event.code != 1000) {
                     status_.status = 1;
-                    status_.msg = 'onerror: ' + reason;
+                    status_.msg = url_ + ': ' + reason;
+                    event.target.close_status_ = event.code;
+                    event.target.close_reason_ = reason;
                 }
+
             };
 
             ws.onerror = function(err) {
@@ -94,10 +97,27 @@ new (function() {
                 status_.msg = 'onerror: ' + reason;
             };
             
+            var msg = "";
+            var check = false;
+            for(k in ws_conn) {
+                var ws = ws_conn[k];
+                if( ws.close_status_ != undefined && ws.close_status_ != 1000) {
+                    check = true;
+                    msg += ws.url + ': ' + ws.close_reason_ + '\n';
+                }
+            }
+            if(check) {
+                status_.status = 1;
+                status_.msg = msg;
+            }
+            else {
+                status_.status = 2;
+                status_.msg = 'Ready';
+            }
         }
         catch(e) {
             status_.status = 1;
-            status_.msg = 'exception: ' + reason;
+            status_.msg = url_ + ' exception: ' + e.message;
         }
     };
 
