@@ -217,24 +217,31 @@ new (function() {
 
     ext.getButtonStatus = request_value;
     ext.getSensorValue = request_value;
-            
 
-    ext.onButtonChanged = function(btype) {
-        var ws = ws_conn.get_(null);
-        if(JSON.parse(ws.message.data).command == 'eject' && ws.message.onDiscEjectedCheck != true) {
-            ws.message.onDiscEjectedCheck = true;
+    var state_cache = {};
+
+    ws_conn.get_(null).addEventListener('message', function(message) {
+        var resp = JSON.parse(message.data);
+        var oldval = state_cache[resp.notify];
+        state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
+    });
+
+    ext.onButtonChanged = function(prop) {
+        if(state_cache[prop].update && state_cache[prop].value != 0) {
             return true;
         }
-        return false;
-    }
+    };
 
-    ext.onSensorValueChanged = function(stype, lessmore) {
-        var ws = ws_conn.get_(null);
-        if(JSON.parse(ws.message.data).command == 'close' && ws.message.onDriveClosedCheck != true) {
-            ws.message.onDriveClosedCheck = true;
-            return true;
+    ext.onSensorValueChanged = function(prop, lessmore, threshold) {
+        var value = state_cache[prop].value;
+        if(state_cache[prop].update) {
+            if(lessmore == '<') {
+                return (value < threshold);
+            }
+            else {
+                return (value > threshold);
+            }
         }
-        return false;
     }
 
     // Block and block menu descriptions
@@ -247,7 +254,7 @@ new (function() {
             ['h', 'when %m.buttonStatus', 'onButtonChanged'],
             ['h', 'when %m.sensorType %m.lessMore %n', 'onSensorValueChanged'],
         ],
-	menus: {
+        menus: {
             lessMore: ['<', '>'],
             buttonStatus: ['button pressed', 'A connected', 'B connected', 'C connected', 'D connected'],
             sensorType: ['slider', 'light', 'sound', 'resistance-A', 'resistance-B', 'resistance-C', 'resistance-D'],
