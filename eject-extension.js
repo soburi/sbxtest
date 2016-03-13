@@ -5,7 +5,7 @@ new (function() {
     var last_message = null;
     var message_received = false;
 
-    ws_conn.get_ = function(_k) {
+    function get_first_or_value(_k) {
         var ret = this[_k];
         if(ret == undefined) {
             for(var kk in this) {
@@ -14,7 +14,7 @@ new (function() {
         }
         return ret;
     }
-
+    ws_conn.get_ = get_first_or_value.bind(ws_conn);
 
     ext._shutdown = function() {
         for(k in ws_conn) {
