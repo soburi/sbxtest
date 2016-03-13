@@ -13,7 +13,7 @@ new (function() {
     };
 
     ext.connect = function(_url) {
-        if(ws_conn != null) {}
+        if(ws_conn != null) {
             switch(ws_conn.readyState) {
                 case 0:
                 case 1:
