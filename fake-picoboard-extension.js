@@ -201,15 +201,15 @@ new (function() {
     };
 
 
-    var request_value = function(stype, callback) {
+    var request_value = function(prop, callback) {
         var ws = ws_conn.get_(null);
 
 		if( ws.r_block_listener == undefined) {
 			var listener = function(message) {
-				if(r_block_callback_ != undefined) {
 					var resp = JSON.parse(message.data);
-					r_block_callback_(message);
-					r_block_callback_ = undefined;
+					if(resp.response == prop) {
+						callback(message);
+					}
 				}
 			};
 
@@ -217,7 +217,7 @@ new (function() {
 			ws.addEventListener('message', ws.r_block_listener_);
 		}
 
-        var req = {request: stype};
+        var req = {request: prop};
         ext.send(JSON.stringify(req), null);
     };
 
