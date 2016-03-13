@@ -204,18 +204,12 @@ new (function() {
     var request_value = function(prop, callback) {
         var ws = ws_conn.get_(null);
 
-		if( ws.r_block_listener == undefined) {
-			var listener = function(message) {
-					var resp = JSON.parse(message.data);
-					if(resp.response == prop) {
-						callback(message);
-					}
-				}
-			};
-
-			ws.r_block_listener_ = listener.bind(ws);
-			ws.addEventListener('message', ws.r_block_listener_);
-		}
+        ws.addEventListener('message', function(message) {
+            var resp = JSON.parse(message.data);
+            if(resp.response == prop) {
+                callback(message);
+            }
+        });
 
         var req = {request: prop};
         ext.send(JSON.stringify(req), null);
