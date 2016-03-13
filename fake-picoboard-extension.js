@@ -220,19 +220,25 @@ new (function() {
 
     var state_cache = {};
 
-    ws_conn.get_(null).addEventListener('message', function(message) {
+    var state_received = function(message) {
         var resp = JSON.parse(message.data);
         var oldval = state_cache[resp.notify];
         state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
     });
 
     ext.onButtonChanged = function(prop) {
+        var ws = ws_conn.get_(null);
+        ws.addEventListener('message', state_received);
+
         if(state_cache[prop].update && state_cache[prop].value != 0) {
             return true;
         }
     };
 
     ext.onSensorValueChanged = function(prop, lessmore, threshold) {
+        var ws = ws_conn.get_(null);
+        ws.addEventListener('message', state_received);
+
         var value = state_cache[prop].value;
         if(state_cache[prop].update) {
             if(lessmore == '<') {
