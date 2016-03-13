@@ -205,13 +205,15 @@ new (function() {
         var ws = ws_conn.get_(null);
 
 		if( ws.r_block_listener == undefined) {
-			ws.r_block_listener = function(message) {
-				if(ws.r_block_callback_ != undefined) {
+			var listener = function(message) {
+				if(r_block_callback_ != undefined) {
 					var resp = JSON.parse(message.data);
-					ws.r_block_callback_(message);
-					ws.r_block_callback_ = undefined;
+					r_block_callback_(message);
+					r_block_callback_ = undefined;
 				}
 			};
+
+			ws.r_block_listener = listener.bind(ws);
 			ws.addEventListener('message', ws.r_block_listener);
 		}
 
