@@ -182,12 +182,12 @@ new (function() {
 
     ext.send_eject = function() {
         var data = {command: 'eject'};
-        ext.send(data, null);
+        ext.send(JSON.stringify(data), null);
     };
 
     ext.send_close = function() {
         var data = {command: 'close'};
-        ext.send(data, null);
+        ext.send(JSON.stringify(data), null);
     };
 
     ext.onDiskEjected = function() {
