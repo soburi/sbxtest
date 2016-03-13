@@ -183,7 +183,7 @@ new (function() {
         return JSON.stringify(jsonobj);
     };
 
-    ext.getJsonProperty = function(jsonstr, propname) {
+    ext.getJsonProperty = function(propname, jsonstr) {
         var jsonobj = jsonstr;
         if(jQuery.type(jsonstr) == 'string') {
             jsonobj = JSON.parse(jsonstr);
