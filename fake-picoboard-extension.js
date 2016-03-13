@@ -207,7 +207,7 @@ new (function() {
         ws.addEventListener('message', function(message) {
             var resp = JSON.parse(message.data);
             if(resp.response == prop) {
-                callback(message);
+                callback(resp.value);
             }
         });
 
