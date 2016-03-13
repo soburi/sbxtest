@@ -179,11 +179,11 @@ new (function() {
     };
 
     ext.send_eject = function() {
-        send('eject', null);
+        ext.send('eject', null);
     };
 
     ext.send_close = function() {
-        send('close', null);
+        ext.send('close', null);
     };
 
     ext.onDiskEjected = function() {
