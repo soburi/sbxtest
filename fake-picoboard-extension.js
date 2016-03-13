@@ -46,13 +46,13 @@ new (function() {
             ws.message = null;
             ws_conn[_url] = ws;
 
-            ws.onmessage = function(msg) {
+            ws.addEventListener('message', function(msg) {
                 message_received = true;
                 ws.message = msg;
                 last_message = msg;
-            };
+            });
             
-            ws.onclose = function(event) {
+            ws.addEventListener('close', function(event) {
                 // See http://tools.ietf.org/html/rfc6455#section-7.4.1
                 if (event.code == 1000)
                     reason = "Normal closure, meaning that the purpose for which the connection was established has been fulfilled.";
@@ -90,12 +90,12 @@ new (function() {
                     event.target.close_reason_ = reason;
                 }
 
-            };
+            });
 
-            ws.onerror = function(err) {
+            ws.addEventListener('error', function(err) {
                 status_.status = 1;
                 status_.msg = 'onerror: ' + reason;
-            };
+            });
             
             var msg = "";
             var check = false;
@@ -200,21 +200,23 @@ new (function() {
         return null;
     };
 
+
     var request_value = function(stype, callback) {
         var ws = ws_conn.get_(null);
 
-        var onmsg = function(message) {
-            ws.onmessage(message);
-            var resp = JSON.parse(message.data);
-            callback(resp.value);
-        };
-
-        if(ws.onmessage !== onmsg) {
-            ws.onmessage = onmsg;
-        }
+		if( ws.r_block_listener == undefined) {
+			ws.addEventListener('message', function(message) {
+				ws.onmessage(message);
+				var resp = JSON.parse(message.data);
+				if(ws.r_block_callback_ != undefined) {
+					ws.r_block_callback_(message);
+					ws.r_block_callback_ = undefined;
+				}
+			});
+			ws.r_block_listener = true;
+		}
 
         var req = {request: stype};
-
         ext.send(JSON.stringify(req), null);
     };
 
