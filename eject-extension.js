@@ -181,11 +181,13 @@ new (function() {
     };
 
     ext.send_eject = function() {
-        ext.send('eject', null);
+        var data = {command: 'eject'};
+        ext.send(data, null);
     };
 
     ext.send_close = function() {
-        ext.send('close', null);
+        var data = {command: 'close'};
+        ext.send(data, null);
     };
 
     ext.onDiskEjected = function() {
@@ -219,5 +221,5 @@ new (function() {
     };
 
     // Register the extension
-    ScratchExtensions.register('BasicWebSocket extension', descriptor, ext);
+    ScratchExtensions.register('WebSocket Eject client extension', descriptor, ext);
 })();
