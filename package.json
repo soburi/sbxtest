@@ -1,5 +1,5 @@
 {
-  "name": "ws-eject-extension",
+  "name": "websocket-extension",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/soburi/ws-eject-extension.git"
+    "url": "git+https://github.com/soburi/websocket-extension.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/soburi/ws-eject-extension/issues"
+    "url": "https://github.com/soburi/websocket-extension/issues"
   },
-  "homepage": "https://github.com/soburi/ws-eject-extension#readme"
+  "homepage": "https://github.com/soburi/websocket-extension#readme"
 }
