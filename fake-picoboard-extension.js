@@ -213,8 +213,8 @@ new (function() {
 				}
 			};
 
-			ws.r_block_listener = listener.bind(ws);
-			ws.addEventListener('message', ws.r_block_listener);
+			ws.r_block_listener_ = listener.bind(ws);
+			ws.addEventListener('message', ws.r_block_listener_);
 		}
 
         var req = {request: stype};
