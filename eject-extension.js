@@ -102,7 +102,7 @@ new (function() {
     };
 
     ext.disconnect = function(_url) {
-	var ws = ws_conn.get_(_url);
+        var ws = ws_conn.get_(_url);
         switch(ws.readyState) {
             case 0:
             case 1:
@@ -111,7 +111,7 @@ new (function() {
     };
 
     ext.send = function(data, _url) {
-	var ws = ws_conn.get_(_url);
+        var ws = ws_conn.get_(_url);
         ws.send(data);
     };
 
