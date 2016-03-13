@@ -59,11 +59,16 @@ new (function() {
         ws_conn.send('eject');
     };
 
+    ext.send_close = function() {
+        ws_conn.send('close');
+    };
+
     ext.onDiskEjected = function() {
         if(ws_conn.msg == 'ejected') {
              ws_conn.msg = null;
              return true;
         }
+	return false;
     }
 
     ext.onDriveClosed = function() {
@@ -71,6 +76,7 @@ new (function() {
              ws_conn.msg = null;
              return true;
         }
+	return false;
     }
 
     // Block and block menu descriptions
