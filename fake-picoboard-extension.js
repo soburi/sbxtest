@@ -206,9 +206,8 @@ new (function() {
 
 		if( ws.r_block_listener == undefined) {
 			ws.addEventListener('message', function(message) {
-				ws.onmessage(message);
-				var resp = JSON.parse(message.data);
 				if(ws.r_block_callback_ != undefined) {
+					var resp = JSON.parse(message.data);
 					ws.r_block_callback_(message);
 					ws.r_block_callback_ = undefined;
 				}
