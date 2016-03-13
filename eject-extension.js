@@ -2,7 +2,6 @@ new (function() {
     var ext = this;
 
     var ws_conn = null;
-    var msg_ejected = false;
 
     ext._shutdown = function() {
         ws_conn[k].close();
@@ -59,9 +58,9 @@ new (function() {
     };
 
     ext.onDiskEject = function() {
-       if(msg_ejected == true) {
-          msg_ejectecd = false;
-           return true;
+        if(ws_conn.msg == 'ejected') {
+            ws_conn.msg = null;
+             return true;
         }
     }
 
