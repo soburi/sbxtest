@@ -64,16 +64,16 @@ new (function() {
     };
 
     ext.onDiskEjected = function() {
-        if(ws_conn.msg.data == 'ejected') {
-             ws_conn.msg = null;
+        if(ws_conn.message.data == 'ejected') {
+             ws_conn.message = null;
              return true;
         }
 	return false;
     }
 
     ext.onDriveClosed = function() {
-        if(ws_conn.msg.data == 'closed') {
-             ws_conn.msg = null;
+        if(ws_conn.message.data == 'closed') {
+             ws_conn.message = null;
              return true;
         }
 	return false;
