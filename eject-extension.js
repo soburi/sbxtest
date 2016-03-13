@@ -10,7 +10,7 @@ new (function() {
         if(ret == undefined) {
             for(var kk in this) {
                 if(kk.indexOf('://') != -1) {
-                return this[kk];
+                    return this[kk];
                 }
             }
         }
@@ -189,21 +189,21 @@ new (function() {
     };
 
     ext.onDiskEjected = function() {
-	var ws = ws_conn.get_(null);
-        if(ws.message.data == 'ejected') {
-             ws.message = null;
-             return true;
+        var ws = ws_conn.get_(null);
+        if(ws.message.data == 'ejected' && ws.message.onDiscEjectedCheck != true) {
+            ws.message.onDiscEjectedCheck = true;
+            return true;
         }
-	return false;
+        return false;
     }
 
     ext.onDriveClosed = function() {
-	var ws = ws_conn.get_(null);
-        if(ws.message.data == 'closed') {
-             ws.message = null;
-             return true;
+        var ws = ws_conn.get_(null);
+        if(ws.message.data == 'closed' && ws.message.onDriveClosedCheck != true) {
+            ws.message.onDriveClosedCheck = true;
+            return true;
         }
-	return false;
+        return false;
     }
 
     // Block and block menu descriptions
