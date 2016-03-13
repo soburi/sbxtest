@@ -13,11 +13,13 @@ new (function() {
     };
 
     ext.connect = function(_url) {
-        switch(ws_conn.readyState) {
-            case 0:
-            case 1:
-                return;
-            default: //fall through
+        if(ws_conn != null) {}
+            switch(ws_conn.readyState) {
+                case 0:
+                case 1:
+                    return;
+                default: //fall through
+            }
         }
 
         var reason = "";
@@ -53,7 +55,7 @@ new (function() {
         ws_conn.close();
     };
 
-    ext.send_eject = function(data) {
+    ext.send_eject = function() {
         ws_conn.send('eject');
     };
 
@@ -70,8 +72,7 @@ new (function() {
             [ '', 'connect to %s', 'connect'],
             [ '', 'disconnect', 'disconnect'],
             [ '', '(☝ ՞ਊ ՞)☝', 'send_eject'],
-            ['h', 'when Disc Ejected', 'onDiskEject'],
-
+            ['h', 'when disc ejected', 'onDiskEject'],
         ]
     };
 
