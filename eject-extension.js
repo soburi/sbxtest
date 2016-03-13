@@ -59,9 +59,16 @@ new (function() {
         ws_conn.send('eject');
     };
 
-    ext.onDiskEject = function() {
+    ext.onDiskEjected = function() {
         if(ws_conn.msg == 'ejected') {
-            ws_conn.msg = null;
+             ws_conn.msg = null;
+             return true;
+        }
+    }
+
+    ext.onDriveClosed = function() {
+        if(ws_conn.msg == 'closed') {
+             ws_conn.msg = null;
              return true;
         }
     }
@@ -72,7 +79,9 @@ new (function() {
             [ '', 'connect to %s', 'connect'],
             [ '', 'disconnect', 'disconnect'],
             [ '', '(☝ ՞ਊ ՞)☝', 'send_eject'],
-            ['h', 'when disc ejected', 'onDiskEject'],
+            [ '', 'close drive', 'send_close'],
+            ['h', 'when disc ejected', 'onDiskEjected'],
+            ['h', 'when drive closed', 'onDriveClosed'],
         ]
     };
 
