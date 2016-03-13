@@ -224,7 +224,7 @@ new (function() {
         var resp = JSON.parse(message.data);
         var oldval = state_cache[resp.notify];
         state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
-    });
+    };
 
     ext.onButtonChanged = function(prop) {
         var ws = ws_conn.get_(null);
@@ -248,7 +248,7 @@ new (function() {
                 return (value > threshold);
             }
         }
-    }
+    };
 
     // Block and block menu descriptions
     var descriptor = {
