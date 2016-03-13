@@ -64,7 +64,7 @@ new (function() {
     };
 
     ext.onDiskEjected = function() {
-        if(ws_conn.msg == 'ejected') {
+        if(ws_conn.msg.data == 'ejected') {
              ws_conn.msg = null;
              return true;
         }
@@ -72,7 +72,7 @@ new (function() {
     }
 
     ext.onDriveClosed = function() {
-        if(ws_conn.msg == 'closed') {
+        if(ws_conn.msg.data == 'closed') {
              ws_conn.msg = null;
              return true;
         }
