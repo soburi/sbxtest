@@ -5,6 +5,19 @@ new (function() {
     var last_message = null;
     var message_received = false;
 
+    function get_first_or_value(_k) {
+        var ret = this[_k];
+        if(ret == undefined) {
+            for(var kk in this) {
+                if(kk.indexOf('://') != -1) {
+                    return this[kk];
+                }
+            }
+        }
+        return ret;
+    }
+    ws_conn.get_ = get_first_or_value.bind(ws_conn);
+
     ext._shutdown = function() {
         for(k in ws_conn) {
             ws_conn[k].close();
@@ -72,8 +85,11 @@ new (function() {
 
                 if(event.code != 1000) {
                     status_.status = 1;
-                    status_.msg = 'onerror: ' + reason;
+                    status_.msg = _url + ': ' + reason;
+                    event.target.close_status_ = event.code;
+                    event.target.close_reason_ = reason;
                 }
+
             };
 
             ws.onerror = function(err) {
@@ -81,27 +97,42 @@ new (function() {
                 status_.msg = 'onerror: ' + reason;
             };
             
+            var msg = "";
+            var check = false;
+            for(k in ws_conn) {
+                var ws = ws_conn[k];
+                if( ws.close_status_ != undefined && ws.close_status_ != 1000) {
+                    check = true;
+                    msg += ws.url + ': ' + ws.close_reason_ + '\n';
+                }
+            }
+            if(check) {
+                status_.status = 1;
+                status_.msg = msg;
+            }
+            else {
+                status_.status = 2;
+                status_.msg = 'Ready';
+            }
         }
         catch(e) {
             status_.status = 1;
-            status_.msg = 'exception: ' + reason;
+            status_.msg = _url + ' exception: ' + e.message;
         }
     };
 
     ext.disconnect = function(_url) {
-        if(_url in ws_conn) {
-            switch(ws_conn[_url].readyState) {
-                case 0:
-                case 1:
-                ws_conn[_url].close();
-            }
+        var ws = ws_conn.get_(_url);
+        switch(ws.readyState) {
+            case 0:
+            case 1:
+            ws.close();
         }
     };
 
     ext.send = function(data, _url) {
-        if(_url in ws_conn) {
-            ws_conn[_url].send(data);
-        }
+        var ws = ws_conn.get_(_url);
+        ws.send(data);
     };
 
     ext.getMessage = function(_url) {
@@ -188,5 +219,5 @@ new (function() {
     };
 
     // Register the extension
-    ScratchExtensions.register('BasicWebSocket extension', descriptor, ext);
+    ScratchExtensions.register('WebSocket extension', descriptor, ext);
 })();
