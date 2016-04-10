@@ -200,24 +200,26 @@ new (function() {
         return null;
     };
 
+    var stat = new Object();
+    stat.callbacked = false;
 
     var request_value = function(prop, callback) {
         var ws = ws_conn.get_(null);
 
-	var callbacked = false;
+	this.callbacked = false;
 
 	setTimeout( function() {
-		if(!callbacked) {
-			callbacked = true;
+		if(!this.callbacked) {
+			this.callbacked = true;
 			callback(-1);
 		}
 	}, 1000 );
 
         ws.addEventListener('message', function(message) {
             var resp = JSON.parse(message.data);
-	    if(!callbacked) {
+	    if(!this.callbacked) {
 		    if(resp.response == prop) {
-			callbacked = true;
+			this.callbacked = true;
 			callback(resp.value);
 		    }
 	    }
@@ -225,7 +227,7 @@ new (function() {
 
         var req = {request: prop};
         ext.send(JSON.stringify(req), null);
-    };
+    }.bind(stat);
 
     ext.getButtonStatus = request_value;
     ext.getSensorValue = request_value;
