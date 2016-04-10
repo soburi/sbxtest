@@ -204,11 +204,23 @@ new (function() {
     var request_value = function(prop, callback) {
         var ws = ws_conn.get_(null);
 
+	var callbacked = false;
+
+	setTimeout( function() {
+		if(!callbacked) {
+			callbacked = true;
+			callback(-1);
+		}
+	}, 1000 );
+
         ws.addEventListener('message', function(message) {
             var resp = JSON.parse(message.data);
-            if(resp.response == prop) {
-                callback(resp.value);
-            }
+	    if(!callbacked) {
+		    if(resp.response == prop) {
+			callbacked = true;
+			callback(resp.value);
+		    }
+	    }
         });
 
         var req = {request: prop};
