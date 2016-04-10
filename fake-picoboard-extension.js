@@ -200,31 +200,34 @@ new (function() {
         return null;
     };
 
+    var reqid = 0;
 
     var request_value = function(prop, callback) {
         var ws = ws_conn.get_(null);
+        var req = {"request": prop, "reqid":reqid};
 
-	var callbacked = false;
-
-	setTimeout( function() {
-		if(!callbacked) {
-			callbacked = true;
-			callback(-1);
-		}
-	}, 3000 );
+        var callbacked = false;
+        
+        setTimeout( function() {
+            if(!callbacked) {
+                callbacked = true;
+                callback();
+            }
+        }, 3000 );
 
         ws.addEventListener('message', function(message) {
             var resp = JSON.parse(message.data);
-	    if(!callbacked) {
-		    if(resp.response == prop) {
-			callbacked = true;
-			callback(resp.value);
-		    }
-	    }
+	    var _req = req;
+            if(!callbacked) {
+                if(resp.response == prop) {
+                    callbacked = true;
+                    callback("" + resp.value);
+                }
+            }
         });
 
-        var req = {request: prop};
         ext.send(JSON.stringify(req), null);
+	reqid++;
     };
 
     ext.getButtonStatus = request_value;
