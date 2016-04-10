@@ -211,7 +211,7 @@ new (function() {
 			callbacked = true;
 			callback(-1);
 		}
-	}, 1000 );
+	}, 3000 );
 
         ws.addEventListener('message', function(message) {
             var resp = JSON.parse(message.data);
