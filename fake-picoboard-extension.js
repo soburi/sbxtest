@@ -78,26 +78,26 @@ new (function() {
                     msg += ws.url + ': ' + ws.close_reason_ + '\n';
                 }
             }
-            if(check) {
-                status_.status = 1;
-                status_.msg = msg;
-            }
-            else {
-                status_.status = 2;
-                status_.msg = 'Ready';
-            }
 
             if(!callbacked) {
+                if(check) {
+                    status_.status = 1;
+                    status_.msg = msg;
+                }
+                else {
+                    status_.status = 2;
+                    status_.msg = 'Ready';
+                }
+
                 callbacked = true;
                 callback();
             }
         });
 
         ws.addEventListener('error', function(err) {
-            status_.status = 1;
-            status_.msg = 'onerror: ' + reason;
-
             if(!callbacked) {
+                status_.status = 1;
+                status_.msg = 'onerror: ' + reason;
                 callbacked = true;
                 callback();
             }
