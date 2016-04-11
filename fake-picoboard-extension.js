@@ -34,7 +34,7 @@ new (function() {
     ext.connect = function(_url, callback) {
         console.log("ext.connect");
         if(_url in ws_conn) {
-            console.log(_url + " " + ws_conn[_url].readyState);
+            console.log(url + " " + ws_conn[_url].readyState);
             switch(ws_conn[_url].readyState) {
                 case 0:
                 case 1:
@@ -63,7 +63,7 @@ new (function() {
         var callbacked = false;
         setTimeout( function() {
             if(!callbacked) {
-                console.log(ws._url + ": connect timeout");
+                console.log(ws.url + ": connect timeout");
                 status_.status = 1;
                 status_.msg = "Connect timeout";
                 callbacked = true;
@@ -73,7 +73,7 @@ new (function() {
         }, 3000 );
 
         ws.addEventListener('open', function(event) {
-            console.log(ws._url + ": onopen");
+            console.log(event.target.url + ": onopen");
             var msg = "";
             var check = false;
             for(k in ws_conn) {
@@ -100,7 +100,7 @@ new (function() {
         });
 
         ws.addEventListener('error', function(err) {
-            console.log(ws._url + ": onerror");
+            console.log(ws.url + ": onerror");
             if(!callbacked) {
                 status_.status = 1;
                 status_.msg = 'onerror: ' + reason;
@@ -111,7 +111,7 @@ new (function() {
         });
         
         ws.addEventListener('message', function(event) {
-            console.log(ws._url + ": onmessage");
+            console.log(ws.url + ": onmessage");
             message_received = true;
             ws.message = event;
             last_message_origin = ws.url;
@@ -119,7 +119,7 @@ new (function() {
         });
         
         ws.addEventListener('close', function(event) {
-            console.log(ws._url + ": onclose");
+            console.log(ws.url + ": onclose");
             // See http://tools.ietf.org/html/rfc6455#section-7.4.1
             if (event.code == 1000)
                 reason = "Normal closure, meaning that the purpose for which the connection was established has been fulfilled.";
