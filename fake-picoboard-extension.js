@@ -19,6 +19,7 @@ new (function() {
                 return this[kk];
             }
         }
+        return null;
     }
     ws_conn.get_ = get_first_or_value.bind(ws_conn);
 
@@ -156,6 +157,11 @@ new (function() {
 
     ext.disconnect = function(_url, callback) {
         var ws = ws_conn.get_(_url);
+        if(ws == null) {
+            callback(-1);
+            return;
+        }
+
         switch(ws.readyState) {
             case 0:
             case 1:
@@ -241,8 +247,13 @@ new (function() {
     };
 
     ext.getSensorValue = function(prop, callback) {
-        var ws = ws_conn.get_(null);
         var req = {"request": prop, "reqid":reqid};
+
+        var ws = ws_conn.get_(null);
+        if(ws == null) {
+            callback(-1);
+            return;
+        }
 
         var callbacked = false;
         
@@ -279,6 +290,8 @@ new (function() {
 
     ext.onButtonChanged = function(prop) {
         var ws = ws_conn.get_(null);
+        if(ws == null) return false;
+
         ws.addEventListener('message', state_received);
 
         if(state_cache[prop].update && state_cache[prop].value != 0) {
@@ -288,6 +301,8 @@ new (function() {
 
     ext.onSensorValueChanged = function(prop, lessmore, threshold) {
         var ws = ws_conn.get_(null);
+        if(ws == null) return false;
+
         ws.addEventListener('message', state_received);
 
         var value = state_cache[prop].value;
