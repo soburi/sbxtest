@@ -155,7 +155,19 @@ new (function() {
         });
     };
 
-    ext.disconnect = function(_url, callback) {
+    ext.disconnect = function(arg0, arg1) {
+        var _url = null;
+        var callback = null;
+
+        if(callback == undefined) {
+            _url = null;
+            callback = arg0;
+        }
+        else {
+            _url = arg0;
+            callback = arg1;
+        }
+
         var ws = ws_conn.get_(_url);
         if(ws == null) {
             callback();
