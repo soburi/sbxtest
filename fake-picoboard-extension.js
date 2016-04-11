@@ -154,12 +154,17 @@ new (function() {
         });
     };
 
-    ext.disconnect = function(_url) {
+    ext.disconnect = function(_url, callback) {
         var ws = ws_conn.get_(_url);
         switch(ws.readyState) {
             case 0:
             case 1:
-            ws.close();
+                ws.close();
+                ws.addEventListener('close', function(event) {
+                    callback();
+                });
+            default:
+                callback();
         }
     };
 
@@ -185,14 +190,6 @@ new (function() {
         */
     };
 
-    ext.getLastReceivedMessage = function(_url) {
-        var ws = ws_conn.get_(_url);
-        return ws.message;
-        //var tmp = last_message;
-        //last_message = null;
-        //return tmp;
-    };
-    
     ext.getLastReceivedMessageOrigin = function() {
         return last_message_origin;
         //if(last_message != null) {
@@ -308,7 +305,7 @@ new (function() {
     var descriptor = {
         blocks: [
             ['w', 'connect to %s', 'connect'],
-            [ '', 'disconnect', 'disconnect'],
+            ['w', 'disconnect', 'disconnect'],
             ['R', 'sensor %m.buttonStatus sensor value', 'getSensorValue'],
             ['R', '%m.sensorType sensor value', 'getSensorValue'],
             ['h', 'when %m.buttonStatus', 'onButtonChanged'],
