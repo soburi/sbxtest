@@ -55,8 +55,8 @@ new (function() {
             status_.status = 1;
             status_.msg = _url + ' exception: ' + e.message;
             callbacked = true;
-            callback();
             console.log(_url + " callback:" + status_.msg);
+            callback();
             return;
         }
 
@@ -67,8 +67,8 @@ new (function() {
                 status_.status = 1;
                 status_.msg = "Connect timeout";
                 callbacked = true;
-                callback();
                 console.log(_url + " callback:" + status_.msg);
+                callback();
             }
         }, 3000 );
 
@@ -95,6 +95,7 @@ new (function() {
                 }
 
                 callbacked = true;
+                console.log(_url + "onopen callback:" + status_.msg);
                 callback();
             }
         });
@@ -105,8 +106,8 @@ new (function() {
                 status_.status = 1;
                 status_.msg = 'onerror: ' + reason;
                 callbacked = true;
+                console.log(_url + "onerror callback:" + status_.msg);
                 callback();
-                console.log(_url + " callback:" + status_.msg);
             }
         });
         
@@ -158,8 +159,8 @@ new (function() {
 
                 if(!callbacked) {
                     callbacked = true;
-                    callback();
                     console.log(_url + " callback:" + status_.msg);
+                    callback();
                 }
             }
         });
@@ -181,6 +182,7 @@ new (function() {
 
         var ws = ws_conn.get_(_url);
         if(ws == null) {
+            console.log(ws.url + "disconnect callback: not yet init");
             callback();
             return;
         }
@@ -190,9 +192,11 @@ new (function() {
             case 1:
                 ws.close();
                 ws.addEventListener('close', function(event) {
+                    console.log(ws.url + "disconnect onclose callback:");
                     callback();
                 });
             default:
+                console.log(ws.url + "disconnect default callback:");
                 callback();
         }
     };
@@ -281,6 +285,7 @@ new (function() {
 
         var ws = ws_conn.get_(null);
         if(ws == null) {
+            console.log(ws.url + "getSensorValue callback: not yet init");
             callback(-1);
             return;
         }
@@ -290,9 +295,10 @@ new (function() {
         setTimeout( function() {
             if(!callbacked) {
                 callbacked = true;
-                callback(-1);
                 status_.status = 1;
                 status_.msg = "Request timeout";
+                console.log(ws.url + "getSensorValue timeout");
+                callback(-1);
             }
         }, 3000 );
 
@@ -302,6 +308,7 @@ new (function() {
             if(!callbacked) {
                 if(resp.response == prop) {
                     callbacked = true;
+                    console.log(ws.url + "getSensorValue response:" + resp.value);
                     callback(resp.value);
                 }
             }
