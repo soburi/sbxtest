@@ -59,10 +59,9 @@ new (function() {
 
         var callbacked = false;
         setTimeout( function() {
-            status_.status = 1;
-            status_.msg = "Connect timeout";
-
             if(!callbacked) {
+                status_.status = 1;
+                status_.msg = "Connect timeout";
                 callbacked = true;
                 callback();
             }
