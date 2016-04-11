@@ -53,7 +53,7 @@ new (function() {
             status_.status = 1;
             status_.msg = _url + ' exception: ' + e.message;
             callbacked = true;
-            callback(-1);
+            callback();
             return;
         }
 
@@ -64,7 +64,7 @@ new (function() {
 
             if(!callbacked) {
                 callbacked = true;
-                callback(-1);
+                callback();
             }
         }, 3000 );
 
@@ -99,7 +99,7 @@ new (function() {
 
             if(!callbacked) {
                 callbacked = true;
-                callback(-1);
+                callback();
             }
         });
         
@@ -149,7 +149,7 @@ new (function() {
 
                 if(!callbacked) {
                     callbacked = true;
-                    callback(-1);
+                    callback();
                 }
             }
         });
@@ -158,7 +158,7 @@ new (function() {
     ext.disconnect = function(_url, callback) {
         var ws = ws_conn.get_(_url);
         if(ws == null) {
-            callback(-1);
+            callback();
             return;
         }
 
@@ -260,7 +260,7 @@ new (function() {
         setTimeout( function() {
             if(!callbacked) {
                 callbacked = true;
-                callback();
+                callback(-1);
                 status_.status = 1;
                 status_.msg = "Request timeout";
             }
