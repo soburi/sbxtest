@@ -32,7 +32,9 @@ new (function() {
     };
 
     ext.connect = function(_url, callback) {
+        console.log("ext.connect");
         if(_url in ws_conn) {
+            console.log(_url + " " + ws_conn[_url].readyState);
             switch(ws_conn[_url].readyState) {
                 case 0:
                 case 1:
@@ -54,20 +56,24 @@ new (function() {
             status_.msg = _url + ' exception: ' + e.message;
             callbacked = true;
             callback();
+            console.log(_url + " callback:" + status_.msg);
             return;
         }
 
         var callbacked = false;
         setTimeout( function() {
             if(!callbacked) {
+                console.log(ws._url + ": connect timeout");
                 status_.status = 1;
                 status_.msg = "Connect timeout";
                 callbacked = true;
                 callback();
+                console.log(_url + " callback:" + status_.msg);
             }
         }, 3000 );
 
         ws.addEventListener('open', function(event) {
+            console.log(ws._url + ": onopen");
             var msg = "";
             var check = false;
             for(k in ws_conn) {
@@ -94,15 +100,18 @@ new (function() {
         });
 
         ws.addEventListener('error', function(err) {
+            console.log(ws._url + ": onerror");
             if(!callbacked) {
                 status_.status = 1;
                 status_.msg = 'onerror: ' + reason;
                 callbacked = true;
                 callback();
+                console.log(_url + " callback:" + status_.msg);
             }
         });
         
         ws.addEventListener('message', function(event) {
+            console.log(ws._url + ": onmessage");
             message_received = true;
             ws.message = event;
             last_message_origin = ws.url;
@@ -110,6 +119,7 @@ new (function() {
         });
         
         ws.addEventListener('close', function(event) {
+            console.log(ws._url + ": onclose");
             // See http://tools.ietf.org/html/rfc6455#section-7.4.1
             if (event.code == 1000)
                 reason = "Normal closure, meaning that the purpose for which the connection was established has been fulfilled.";
@@ -149,12 +159,14 @@ new (function() {
                 if(!callbacked) {
                     callbacked = true;
                     callback();
+                    console.log(_url + " callback:" + status_.msg);
                 }
             }
         });
     };
 
     ext.disconnect = function(arg0, arg1) {
+        console.log("ext.disconnect");
         var _url = null;
         var callback = null;
 
@@ -186,11 +198,13 @@ new (function() {
     };
 
     ext.send = function(data, _url) {
+        console.log("ext.send");
         var ws = ws_conn.get_(_url);
         ws.send(data);
     };
 
     ext.getMessage = function(_url) {
+        console.log("ext.getMessage");
         var ws = ws_conn.get_(_url);
         return ws.message;
 
@@ -208,6 +222,7 @@ new (function() {
     };
 
     ext.getLastReceivedMessageOrigin = function() {
+        console.log("ext.getLastReceivedMessageOrigin");
         return last_message_origin;
         //if(last_message != null) {
         //    return last_message.origin;
@@ -226,11 +241,13 @@ new (function() {
     // Tiny Json Library
 
     ext.emptyObject = function() {
+        console.log("ext.emptyObject");
         var obj = new Object();
         return JSON.stringify(obj);
     };
 
     ext.addJsonProperty = function(propname, propvalue, jsonstr) {
+        console.log("ext.addJsonProperty");
         var jsonobj = jsonstr;
         if(jQuery.type(jsonstr) == 'string') {
             jsonobj = JSON.parse(jsonstr);
@@ -241,6 +258,7 @@ new (function() {
     };
 
     ext.getJsonProperty = function(propname, jsonstr) {
+        console.log("ext.getJsonProperty");
         var jsonobj = jsonstr;
         if(jQuery.type(jsonstr) == 'string') {
             jsonobj = JSON.parse(jsonstr);
@@ -258,6 +276,7 @@ new (function() {
     };
 
     ext.getSensorValue = function(prop, callback) {
+        console.log("ext.getSensorValue");
         var req = {"request": prop, "reqid":reqid};
 
         var ws = ws_conn.get_(null);
@@ -300,6 +319,7 @@ new (function() {
     };
 
     ext.onButtonChanged = function(prop) {
+        console.log("ext.onButtonChanged");
         var ws = ws_conn.get_(null);
         if(ws == null) return false;
 
@@ -311,6 +331,7 @@ new (function() {
     };
 
     ext.onSensorValueChanged = function(prop, lessmore, threshold) {
+        console.log("ext.onSensorValueChanged");
         var ws = ws_conn.get_(null);
         if(ws == null) return false;
 
