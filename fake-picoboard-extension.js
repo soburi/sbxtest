@@ -187,14 +187,16 @@ new (function() {
             return;
         }
 
-        if(ws.readyState == 1) {
-            console.log("ext.disconnect: close: %s readyState:%d", ws.url, ws.readyState);
-            ws.close();
-            ws.addEventListener('close', function(event) {
-                console.log("%s: onclose callback", ws.url);
-                callback();
-                return;
-            });
+        switch(ws.readyState) {
+            case 0:
+            case 1:
+                console.log("ext.disconnect: close: %s readyState:%d", ws.url, ws.readyState);
+                ws.close();
+                ws.addEventListener('close', function(event) {
+                    console.log("%s: onclose callback", ws.url);
+                    callback();
+                    return;
+                });
         }
         console.log("ext.disconnect: %s: callback default", ws.url);
         callback();
