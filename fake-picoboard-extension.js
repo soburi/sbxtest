@@ -34,7 +34,7 @@ new (function() {
     ext.connect = function(_url, callback) {
         console.log("ext.connect: %s %O", _url, callback);
         if(_url in ws_conn) {
-            console.log(_url + " " + ws_conn[_url].readyState);
+            console.log("ext.connect: %s readyState:%d", _url, ws_conn[_url].readyState);
             switch(ws_conn[_url].readyState) {
                 case 0:
                 case 1:
@@ -55,7 +55,7 @@ new (function() {
             status_.status = 1;
             status_.msg = _url + ' exception: ' + e.message;
             callbacked = true;
-            console.log(_url + " callback:" + status_.msg);
+            console.log("ext.connect: %s: exception:%o", _url, e);
             callback();
             return;
         }
@@ -66,13 +66,13 @@ new (function() {
                 status_.status = 1;
                 status_.msg = "Connect timeout";
                 callbacked = true;
-                console.log("%s connect: timeout callback:%s", _url, status_.msg);
+                console.log("ext.connect: %s timeout", _url);
                 callback();
             }
         }, 3000 );
 
         ws.addEventListener('open', function(event) {
-            console.log(event.target.url + ": onopen");
+            console.log("%s: onopen", ws.url);
             var msg = "";
             var check = false;
             for(k in ws_conn) {
@@ -105,7 +105,7 @@ new (function() {
                 status_.status = 1;
                 status_.msg = 'onerror: ' + reason;
                 callbacked = true;
-                console.log("%s: onerror: callback:%s", _url, status_.msg);
+                console.log("%s: onerror: msg:%s", _url, status_.msg);
                 callback();
             }
         });
@@ -119,7 +119,7 @@ new (function() {
         });
         
         ws.addEventListener('close', function(event) {
-            console.log("%s: onclose:%d", ws.url, event.code);
+            console.log("%s: onclose: %d", ws.url, event.code);
             // See http://tools.ietf.org/html/rfc6455#section-7.4.1
             if (event.code == 1000)
                 reason = "Normal closure, meaning that the purpose for which the connection was established has been fulfilled.";
@@ -158,7 +158,7 @@ new (function() {
 
                 if(!callbacked) {
                     callbacked = true;
-                    console.log("%s onclose: callback:%s", _url, status_.msg);
+                    console.log("%s: onclose: msg:%s", _url, status_.msg);
                     callback();
                 }
             }
@@ -182,7 +182,7 @@ new (function() {
 
         var ws = ws_conn.get_(_url);
         if(ws == null) {
-            console.log(" ext.disconnect: %s not yet init", _url);
+            console.log("ext.disconnect: callback %s not yet init", _url);
             callback();
             return;
         }
@@ -190,15 +190,16 @@ new (function() {
         switch(ws.readyState) {
             case 0:
             case 1:
+                console.log("ext.disconnect: close: %s readyState:%d", ws.url, ws.readyState);
                 ws.close();
                 ws.addEventListener('close', function(event) {
                     console.log("%s: onclose callback", ws.url);
                     callback();
+                    return;
                 });
-            default:
-                console.log("%s: default", ws.url);
-                callback();
         }
+        console.log("ext.disconnect: %s: callback default", ws.url);
+        callback();
     };
 
     ext.send = function(data, _url) {
@@ -297,7 +298,7 @@ new (function() {
                 callbacked = true;
                 status_.status = 1;
                 status_.msg = "Request timeout";
-                console.log("%s getSensorValue: timeout", ws.url);
+                console.log("%s: getSensorValue: timeout, callback", ws.url);
                 callback(-1);
             }
         }, 3000 );
@@ -308,7 +309,7 @@ new (function() {
             if(!callbacked) {
                 if(resp.response == prop) {
                     callbacked = true;
-                    console.log("%s onmessage: getSensorValue response: %o", ws.url, resp.value);
+                    console.log("%s onmessage: getSensorValue callback:%d response:%o", ws.url, resp.value, resp);
                     callback(resp.value);
                 }
             }
@@ -330,11 +331,15 @@ new (function() {
         var ws = ws_conn.get_(null);
         if(ws == null) return false;
 
-        ws.addEventListener('message', state_received);
-
-        if(state_cache[prop].update && state_cache[prop].value != 0) {
-            return true;
-        }
+        ws.addEventListener('message', function(event) {
+            var resp = JSON.parse(event.data);
+            var oldval = state_cache[resp.notify];
+            state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
+            
+            if(state_cache[prop].update && state_cache[prop].value != 0) {
+                return true;
+            }
+        })
     };
 
     ext.onSensorValueChanged = function(prop, lessmore, threshold) {
@@ -342,17 +347,21 @@ new (function() {
         var ws = ws_conn.get_(null);
         if(ws == null) return false;
 
-        ws.addEventListener('message', state_received);
-
-        var value = state_cache[prop].value;
-        if(state_cache[prop].update) {
-            if(lessmore == '<') {
-                return (value < threshold);
+        ws.addEventListener('message', function(event) {
+            var resp = JSON.parse(event.data);
+            var oldval = state_cache[resp.notify];
+            state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
+            
+            var value = state_cache[prop].value;
+            if(state_cache[prop].update) {
+                if(lessmore == '<') {
+                    return (value < threshold);
+                }
+                else {
+                    return (value > threshold);
+                }
             }
-            else {
-                return (value > threshold);
-            }
-        }
+        });
     };
 
     // Block and block menu descriptions
