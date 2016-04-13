@@ -72,7 +72,7 @@ new (function() {
         }, 3000 );
 
         ws.addEventListener('open', function(event) {
-            console.log("%s: onopen", ws.url);
+            console.log("%s: onopen", _url);
             var msg = "";
             var check = false;
             for(k in ws_conn) {
