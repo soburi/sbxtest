@@ -32,9 +32,9 @@ new (function() {
     };
 
     ext.connect = function(_url, callback) {
-        console.log("ext.connect");
+        console.log("ext.connect: %s %O", _url, callback);
         if(_url in ws_conn) {
-            console.log(url + " " + ws_conn[_url].readyState);
+            console.log(_url + " " + ws_conn[_url].readyState);
             switch(ws_conn[_url].readyState) {
                 case 0:
                 case 1:
@@ -63,11 +63,10 @@ new (function() {
         var callbacked = false;
         setTimeout( function() {
             if(!callbacked) {
-                console.log(ws.url + ": connect timeout");
                 status_.status = 1;
                 status_.msg = "Connect timeout";
                 callbacked = true;
-                console.log(_url + " callback:" + status_.msg);
+                console.log("%s connect: timeout callback:%s", _url, status_.msg);
                 callback();
             }
         }, 3000 );
@@ -95,32 +94,32 @@ new (function() {
                 }
 
                 callbacked = true;
-                console.log(_url + "onopen callback:" + status_.msg);
+                console.log("%s: onopen: callback:%s", _url, status_.msg);
                 callback();
             }
         });
 
         ws.addEventListener('error', function(err) {
-            console.log(ws.url + ": onerror");
+            console.log("%s: onerror", ws.url);
             if(!callbacked) {
                 status_.status = 1;
                 status_.msg = 'onerror: ' + reason;
                 callbacked = true;
-                console.log(_url + "onerror callback:" + status_.msg);
+                console.log("%s: onerror: callback:%s", _url, status_.msg);
                 callback();
             }
         });
         
         ws.addEventListener('message', function(event) {
-            console.log(ws.url + ": onmessage");
+            console.log("%s: onmessage:", ws.url, event.data);
             message_received = true;
-            ws.message = event;
+            ws.message = event.data;
             last_message_origin = ws.url;
             //last_message = event;
         });
         
         ws.addEventListener('close', function(event) {
-            console.log(ws.url + ": onclose");
+            console.log("%s: onclose:%d", ws.url, event.code);
             // See http://tools.ietf.org/html/rfc6455#section-7.4.1
             if (event.code == 1000)
                 reason = "Normal closure, meaning that the purpose for which the connection was established has been fulfilled.";
@@ -159,7 +158,7 @@ new (function() {
 
                 if(!callbacked) {
                     callbacked = true;
-                    console.log(_url + " callback:" + status_.msg);
+                    console.log("%s onclose: callback:%s", _url, status_.msg);
                     callback();
                 }
             }
@@ -167,22 +166,23 @@ new (function() {
     };
 
     ext.disconnect = function(arg0, arg1) {
-        console.log("ext.disconnect");
         var _url = null;
         var callback = null;
 
         if(callback == undefined) {
             _url = null;
             callback = arg0;
+            console.log("ext.disconnect: %o", callback);
         }
         else {
             _url = arg0;
             callback = arg1;
+            console.log("ext.disconnect: %s %o", _url, callback);
         }
 
         var ws = ws_conn.get_(_url);
         if(ws == null) {
-            console.log(ws.url + "disconnect callback: not yet init");
+            console.log(" ext.disconnect: %s not yet init", _url);
             callback();
             return;
         }
@@ -192,23 +192,23 @@ new (function() {
             case 1:
                 ws.close();
                 ws.addEventListener('close', function(event) {
-                    console.log(ws.url + "disconnect onclose callback:");
+                    console.log("%s: onclose callback", ws.url);
                     callback();
                 });
             default:
-                console.log(ws.url + "disconnect default callback:");
+                console.log("%s: default", ws.url);
                 callback();
         }
     };
 
     ext.send = function(data, _url) {
-        console.log("ext.send");
+        console.log("ext.send: %s %o", _url, data);
         var ws = ws_conn.get_(_url);
         ws.send(data);
     };
 
     ext.getMessage = function(_url) {
-        console.log("ext.getMessage");
+        console.log("ext.getMessage: %s", _url);
         var ws = ws_conn.get_(_url);
         return ws.message;
 
@@ -251,7 +251,7 @@ new (function() {
     };
 
     ext.addJsonProperty = function(propname, propvalue, jsonstr) {
-        console.log("ext.addJsonProperty");
+        console.log("ext.addJsonProperty: %s %s %s", propname, propvalue, jsonstr);
         var jsonobj = jsonstr;
         if(jQuery.type(jsonstr) == 'string') {
             jsonobj = JSON.parse(jsonstr);
@@ -262,7 +262,7 @@ new (function() {
     };
 
     ext.getJsonProperty = function(propname, jsonstr) {
-        console.log("ext.getJsonProperty");
+        console.log("ext.getJsonProperty: %s %s", propname, jsonstr);
         var jsonobj = jsonstr;
         if(jQuery.type(jsonstr) == 'string') {
             jsonobj = JSON.parse(jsonstr);
@@ -280,12 +280,12 @@ new (function() {
     };
 
     ext.getSensorValue = function(prop, callback) {
-        console.log("ext.getSensorValue");
+        console.log("ext.getSensorValue: %s %o", prop, callback);
         var req = {"request": prop, "reqid":reqid};
 
         var ws = ws_conn.get_(null);
         if(ws == null) {
-            console.log(ws.url + "getSensorValue callback: not yet init");
+            console.log("%s getSensorValue: not yet init", ws.url);
             callback(-1);
             return;
         }
@@ -297,7 +297,7 @@ new (function() {
                 callbacked = true;
                 status_.status = 1;
                 status_.msg = "Request timeout";
-                console.log(ws.url + "getSensorValue timeout");
+                console.log("%s getSensorValue: timeout", ws.url);
                 callback(-1);
             }
         }, 3000 );
@@ -308,7 +308,7 @@ new (function() {
             if(!callbacked) {
                 if(resp.response == prop) {
                     callbacked = true;
-                    console.log(ws.url + "getSensorValue response:" + resp.value);
+                    console.log("%s onmessage: getSensorValue response: %o", ws.url, resp.value);
                     callback(resp.value);
                 }
             }
@@ -326,7 +326,7 @@ new (function() {
     };
 
     ext.onButtonChanged = function(prop) {
-        console.log("ext.onButtonChanged");
+        console.log("ext.onButtonChanged: %s", prop);
         var ws = ws_conn.get_(null);
         if(ws == null) return false;
 
@@ -338,7 +338,7 @@ new (function() {
     };
 
     ext.onSensorValueChanged = function(prop, lessmore, threshold) {
-        console.log("ext.onSensorValueChanged");
+        console.log("ext.onSensorValueChanged: %s %s %d", prop, lessmore, threshold);
         var ws = ws_conn.get_(null);
         if(ws == null) return false;
 
