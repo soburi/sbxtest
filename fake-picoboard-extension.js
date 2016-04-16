@@ -162,9 +162,7 @@ new (function() {
     };
 
     ext.disconnect = function(arg0, arg1) {
-            callback();
-	/*
-        function(_url, callback) {
+        var disconnect_ = function(_url, callback) {
             var ws = ws_conn.get_(_url);
             if(ws == null) {
                 console.log("ext.disconnect: callback %s not yet init", _url);
@@ -185,8 +183,8 @@ new (function() {
             }
             console.log("ext.disconnect: %s: callback default", ws.url);
             callback();
-        }(  arg1==undefined ? null : arg0, arg1==undefined ? arg0 : arg1 );
-	*/
+        };
+	disconnect_(  arg1==undefined ? null : arg0, arg1==undefined ? arg0 : arg1 );
     };
 
     ext.send = function(data, _url) {
