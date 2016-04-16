@@ -129,20 +129,20 @@ new (function() {
             console.log("%s: onclose: %d", ws.url, event.code);
                  if(event.code == 1001) reason = "1000: CLOSE_NORMAL";
             else if(event.code == 1001) reason = "1001: CLOSE_GOING_AWAY";
-            else if(event.code == 1002) reason = "1002:	CLOSE_PROTOCOL_ERROR";
-            else if(event.code == 1003) reason = "1003:	CLOSE_UNSUPPORTED";
+            else if(event.code == 1002) reason = "1002: CLOSE_PROTOCOL_ERROR";
+            else if(event.code == 1003) reason = "1003: CLOSE_UNSUPPORTED";
             else if(event.code == 1004) reason = "1004: RESERVED";
-            else if(event.code == 1005) reason = "1005:	CLOSE_NO_STATUS";
-            else if(event.code == 1006) reason = "1006:	CLOSE_ABNORMAL";
-            else if(event.code == 1007) reason = "1007:	Unsupported Data";
-            else if(event.code == 1008) reason = "1008:	Policy Violation";
-            else if(event.code == 1009) reason = "1009:	CLOSE_TOO_LARGE";
-            else if(event.code == 1010) reason = "1010:	Missing Extension";
-            else if(event.code == 1011) reason = "1011:	Internal Error";
-            else if(event.code == 1012) reason = "1012:	Service Restart";
-            else if(event.code == 1013) reason = "1013:	Try Again Later";
-            else if(event.code == 1014) reason = "1014:	RESERVED";
-            else if(event.code == 1015) reason = "1015:	TLS Handshake";
+            else if(event.code == 1005) reason = "1005: CLOSE_NO_STATUS";
+            else if(event.code == 1006) reason = "1006: CLOSE_ABNORMAL";
+            else if(event.code == 1007) reason = "1007: Unsupported Data";
+            else if(event.code == 1008) reason = "1008: Policy Violation";
+            else if(event.code == 1009) reason = "1009: CLOSE_TOO_LARGE";
+            else if(event.code == 1010) reason = "1010: Missing Extension";
+            else if(event.code == 1011) reason = "1011: Internal Error";
+            else if(event.code == 1012) reason = "1012: Service Restart";
+            else if(event.code == 1013) reason = "1013: Try Again Later";
+            else if(event.code == 1014) reason = "1014: RESERVED";
+            else if(event.code == 1015) reason = "1015: TLS Handshake";
             else                        reason = "" + event.code + ": Unknown reason";
 
             if(event.code != 1000) {
@@ -184,12 +184,12 @@ new (function() {
             console.log("ext.disconnect: %s: callback default", ws.url);
             callback();
         };
-	disconnect_(  arg1==undefined ? null : arg0, arg1==undefined ? arg0 : arg1 );
+        disconnect_(  arg1==undefined ? null : arg0, arg1==undefined ? arg0 : arg1 );
     };
 
     ext.send = function(data, _url) {
-        console.log("ext.send: %s %o", _url, data);
         var ws = ws_conn.get_(_url);
+        console.log("ext.send: %s, %s %o", _url, ws.url, data);
         ws.send(data);
     };
 
