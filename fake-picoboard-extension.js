@@ -143,7 +143,7 @@ new (function() {
             else if(event.code == 1013) reason = "1013:	Try Again Later";
             else if(event.code == 1014) reason = "1014:	RESERVED";
             else if(event.code == 1015) reason = "1015:	TLS Handshake";
-            else                        reason = "" + event.code ": Unknown reason";
+            else                        reason = "" + event.code + ": Unknown reason";
 
             if(event.code != 1000) {
                 ws.close_status_ = event.code;
