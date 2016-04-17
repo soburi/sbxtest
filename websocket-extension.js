@@ -21,5 +21,4 @@ new (function() {
 
         // Register the extension
         ScratchExtensions.register('WebSocket extension', descriptor, ext);
-    });
 })();
