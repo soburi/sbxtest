@@ -119,10 +119,7 @@ new (function() {
         });
     }
     else {
-        var f = function() {
-            fake_picoboard_ext_init(document.ws_ext_init);
-        };
-        f();
+        fake_picoboard_ext_init(document.ws_ext_init);
     }
 
 })();
