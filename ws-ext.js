@@ -149,13 +149,14 @@ function ws_ext_init(ext) {
             if( !ext.isInternalProcessEvent(event) ) {
                 received_events.push(event);
             }
-            let evt = new MessageEvent('message-received');
-            evt.currentTarget = event.currentTarget;
-            evt.data = event.data;
-            evt.origin = event.origin;
-            evt.srcElement = event.srcElement;
-            evt.target = event.target;
-            evt.type = 'message-received';
+            let evt = new MessageEvent('message-received'
+                    {
+                        data: event.data,
+                        origin = event.origin;
+                        currentTarget: event.currentTarget,
+                        srcElement: event.srcElement,
+                        target: event.target
+                    });
             ext.dispatchEvent(evt);
         });
         
