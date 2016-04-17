@@ -109,7 +109,7 @@ new (function() {
     var xinit = function(initfunc) {
         initfunc(this);
         fake_picoboard_ext_init(this);
-        ScratchExtensions.register(name, descriptor, ext);
+        ScratchExtensions.register(name, descriptor, this);
     };
 
     var init = function(ext) {
