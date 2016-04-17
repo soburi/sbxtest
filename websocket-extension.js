@@ -1,7 +1,7 @@
 new (function() {
-    var src = document.createElement('script');
-    src.src = './ws-ext.js';
-    document.getElementsByTagName("head")[0].appendChild(scr);
+    var srcipt = document.createElement('script');
+    script.src = './ws-ext.js';
+    document.getElementsByTagName("head")[0].appendChild(script);
 
     document.ready( function() {
 
