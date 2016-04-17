@@ -149,7 +149,9 @@ function ws_ext_init(ext) {
             if( !ext.isInternalProcessEvent(event) ) {
                 received_events.push(event);
             }
-            ext.dispatchEvent('message-received', event);
+            let cloneevt = event.clone();
+            cloneevt.type = 'message-received';
+            ext.dispatchEvent(cloneevt);
         });
         
         ws.addEventListener('close', function(event) {
