@@ -1,13 +1,30 @@
 new (function() {
+    var ext_ = this;
+
     // Extension name
     var name = 'Fake-PicoBoard extension';
-    var state_cache = {};
-    var reqid = 0;
 
-    var ext = this;
-    
-    var fake_picoboard_ext_init = function(ws_init) {
-        ws_init(ext);
+    // Block and block menu descriptions
+    var descriptor = {
+        blocks: [
+            ['w', 'connect to %s', 'connect'],
+            ['w', 'disconnect', 'disconnect'],
+            ['R', 'sensor %m.buttonStatus sensor value', 'getSensorValue'],
+            ['R', '%m.sensorType sensor value', 'getSensorValue'],
+            ['h', 'when %m.buttonStatus', 'onButtonChanged'],
+            ['h', 'when %m.sensorType %m.lessMore %n', 'onSensorValueChanged'],
+        ],
+        menus: {
+            lessMore: ['<', '>'],
+            buttonStatus: ['button pressed', 'A connected', 'B connected', 'C connected', 'D connected'],
+            sensorType: ['slider', 'light', 'sound', 'resistance-A', 'resistance-B', 'resistance-C', 'resistance-D'],
+        },
+    };
+
+    var fake_picoboard_ext_init = function(ext) {
+
+        var state_cache = {};
+        var reqid = 0;
 
         ext.getSensorValue = function(prop, callback) {
             console.log("ext.getSensorValue: %s %o", prop, callback);
@@ -92,35 +109,22 @@ new (function() {
             });
         };
 
-        // Block and block menu descriptions
-        var descriptor = {
-            blocks: [
-                ['w', 'connect to %s', 'connect'],
-                ['w', 'disconnect', 'disconnect'],
-                ['R', 'sensor %m.buttonStatus sensor value', 'getSensorValue'],
-                ['R', '%m.sensorType sensor value', 'getSensorValue'],
-                ['h', 'when %m.buttonStatus', 'onButtonChanged'],
-                ['h', 'when %m.sensorType %m.lessMore %n', 'onSensorValueChanged'],
-            ],
-            menus: {
-                lessMore: ['<', '>'],
-                buttonStatus: ['button pressed', 'A connected', 'B connected', 'C connected', 'D connected'],
-                sensorType: ['slider', 'light', 'sound', 'resistance-A', 'resistance-B', 'resistance-C', 'resistance-D'],
-            },
-        };
-
         ScratchExtensions.register(name, descriptor, ext);
     };
 
-    if(document.ws_ext_init == undefined) {
+    if(document._ext_init == undefined) {
         var scriptpath = document.currentScript.src.match(/.*\//);
         $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-            document.ws_ext_init = ws_ext_init;
-            fake_picoboard_ext_init(ws_ext_init);
+            document._ext_init = function(ext) {
+                document._ext_init(ext);
+                fake_picoboard_ext_init(ext);
+            };
+            document.ext_init(ext_);
         });
     }
     else {
-        fake_picoboard_ext_init(ws_ext_init);
+        // Suppress reload with differnt url for easy to debugging.
+        document._ext_init(ext_);
     }
 
 })();
