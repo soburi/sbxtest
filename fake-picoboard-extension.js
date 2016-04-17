@@ -113,14 +113,17 @@ new (function() {
     };
 
     if(document.fake_picoboard_ext_init == undefined) {
+            document.fake_picoboard_ext_init = fake_picoboard_ext_init;
+    }
+    //if(document.ws_ext_init == undefined) {
         var scriptpath = document.currentScript.src.match(/.*\//);
         $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-            document.fake_picoboard_ext_init = fake_picoboard_ext_init;
+            document.ws_ext_init = ws_ext_init;
             document.fake_picoboard_ext_init(ws_ext_init);
         });
-    }
-    else {
-        document.fake_picoboard_ext_init(ws_ext_init);
-    }
+    //}
+    //else {
+    //    document.fake_picoboard_ext_init(ws_ext_init);
+    //}
 
 })();
