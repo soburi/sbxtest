@@ -54,6 +54,13 @@ function ws_ext_init(ext) {
         return null;
     }.bind(received_events);
 
+    var eventTarget = document.createDocumentFragment();
+
+    var delegate = function (mtd) { this[mtd] = eventTarget[mtd].bind(eventTarget); }
+    [ "addEventListener", "dispatchEvent", "removeEventListener" ]
+        .forEach(delegate, ext);
+
+
     ext._shutdown = function() {
         for(k in ws_conn) ws_conn[k].close();
     };
