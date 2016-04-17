@@ -6,7 +6,7 @@ new (function() {
     
     document.addEventListener('DOMContentLoaded', function() {
     */
-    $.getScript('ws-ext.js'), function(wsext, textStatus, jqxhr) {
+    $.getScript('ws-ext.js', function(wsext, textStatus, jqxhr) {
         wsext(this);
 
         // Block and block menu descriptions
