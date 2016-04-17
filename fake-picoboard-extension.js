@@ -53,7 +53,13 @@ new (function() {
                     if(resp.response != undefined && resp.value != undefined && resp.response == prop) {
                         callbacked = true;
                         console.log("%s onmessage: getSensorValue callback:%d response:%o", ws.url, resp.value, resp);
-                        state_cache[prop].value = resp.value;
+                        let state = state_cache[prop];
+                        if(state != null) {
+                            state_cache[prop].value = resp.value;
+                        }
+                        else {
+                            state_cache[prop] = { last_probed: resp.value, value: resp.value };
+                        }
                         callback(resp.value);
                     }
                 }
@@ -66,7 +72,13 @@ new (function() {
         ext.addEventListener('message-received', function(event) {
             let recv = JSON.parse(event.data);
             if(recv.notify != undefined && recv.value != undefined) {
-                state_cache[recv.notify].value = recv.value;
+                let state = state_cache[recv.notify];
+                if(state != null) {
+                    state_cache[recv.notify].value = recv.value;
+                }
+                else {
+                    state_cache[recv.notify] = { last_probed: resp.value, value: resp.value };
+                }
             }
         });
 
