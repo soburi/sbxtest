@@ -1,5 +1,5 @@
 new (function() {
-    var ext = this;
+    var ext_ = this;
 
     // Extension name
     var name = 'WebSocket extension';
@@ -23,8 +23,8 @@ new (function() {
     var scriptpath = document.currentScript.src.match(/.*\//);
     $.getScript(scriptpath + 'ws-ext.js')
         .done( function(ws_ext, textStatus) {
-            ws_ext_init(ext);
-            ScratchExtensions.register(name, descriptor, ext);
+            ws_ext_init(ext_);
+            ScratchExtensions.register(name, descriptor, ext_);
         });
 
 })();
