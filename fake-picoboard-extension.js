@@ -30,7 +30,7 @@ new (function() {
             console.log("ext.getSensorValue: %s %o", prop, callback);
             var req = {"request": prop, "reqid":reqid};
 
-            var ws = ext.connection.get_(null);
+            var ws = ext.getConnection(null);
             if(ws == null) {
                 console.log("%s getSensorValue: not yet init", ws.url);
                 callback(-1);
@@ -73,7 +73,7 @@ new (function() {
 
         ext.onButtonChanged = function(prop) {
             console.log("ext.onButtonChanged: %s", prop);
-            var ws = ext.connection.get_(null);
+            var ws = ext.getConnection(null);
             if(ws == null) return false;
 
             ws.addEventListener('message', function(event) {
@@ -89,7 +89,7 @@ new (function() {
 
         ext.onSensorValueChanged = function(prop, lessmore, threshold) {
             console.log("ext.onSensorValueChanged: %s %s %d", prop, lessmore, threshold);
-            var ws = ext.connection.get_(null);
+            var ws = ext.getConnection(null);
             if(ws == null) return false;
 
             ws.addEventListener('message', function(event) {

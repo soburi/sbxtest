@@ -1,10 +1,10 @@
 new (function() {
-  var ext_ = this;
+    var ext_ = this;
 
-  // Extension name
-  var name = 'WebSocket Eject client extension';
+    // Extension name
+    var name = 'WebSocket Eject client extension';
 
-  // Block and block menu descriptions
+    // Block and block menu descriptions
     var descriptor = {
         blocks: [
             [ '', 'connect to %s', 'connect'],
@@ -30,7 +30,7 @@ new (function() {
         };
 
         ext.onDiskEjected = function() {
-            var ws = ws_conn.get_(null);
+            var ws = ext.getConnection(null);
             if(JSON.parse(ws.message.data).command == 'eject' && ws.message.onDiscEjectedCheck != true) {
                 ws.message.onDiscEjectedCheck = true;
                 return true;
@@ -39,7 +39,7 @@ new (function() {
         }
 
         ext.onDriveClosed = function() {
-            var ws = ws_conn.get_(null);
+            var ws = ext.getConnection(null);
             if(JSON.parse(ws.message.data).command == 'close' && ws.message.onDriveClosedCheck != true) {
                 ws.message.onDriveClosedCheck = true;
                 return true;

@@ -1,16 +1,16 @@
-(function (ext) {
-    var ws_conn = {};
-    var received_events = [];
-    var received_events_length = 20;
-    var timeout_duration = 1000;
-    var status_ = {status: 2, msg: 'Ready'};
+function ws_ext_init(ext) {
+    let ws_conn = {};
+    let received_events = [];
+    let received_events_length = 20;
+    let timeout_duration = 1000;
+    let status_ = {status: 2, msg: 'Ready'};
 
-    var connection = function(_k) {
-        var ret = this[_k];
+    let connection = function(_k) {
+        let ret = this[_k];
         if(ret != undefined)
             return ret;
 
-        for(var kk in this) {
+        for(let kk in this) {
             if(kk.indexOf('://') != -1) {
                 return this[kk];
             }
@@ -18,13 +18,13 @@
         return null;
     }.bind(ws_conn);
     ws_conn.get_ = connection;
-    ext.connection = connection;
+    ext.getConnection = connection;
 
     ws_conn.getErrorReason = function() {
-        var msg = null;
-        var ws_conn = this;
+        let msg = null;
+        let ws_conn = this;
         for(k in ws_conn) {
-            var ws = ws_conn[k];
+            let ws = ws_conn[k];
             if( ws.close_status_ != undefined) {
                 if(msg == null) {
                     msg = ws.url + ': ' + ws.close_reason_;
@@ -38,7 +38,7 @@
     }.bind(ws_conn);
 
     received_events.unchecked = function() {
-        for(var i=this.length-1; i>=0; i--) {
+        for(let i=this.length-1; i>=0; i--) {
             if(this[i].checked == undefined) return this[i];
         }
         return null;
@@ -70,8 +70,8 @@
             }
         }
 
-        var reason = "";
-        var ws = null;
+        let reason = "";
+        let ws = null;
         try {
             ws = new WebSocket(_url);
             ws.message = null;
@@ -86,7 +86,7 @@
             return;
         }
 
-        var callbacked = false;
+        let callbacked = false;
         setTimeout( function() {
             if(!callbacked) {
                 status_.status = 1;
@@ -101,7 +101,7 @@
             console.log("%s: onopen", _url);
 
             if(!callbacked) {
-                var errmsg = ws_conn.getErrorReason();
+                let errmsg = ws_conn.getErrorReason();
                 status_.status = (errmsg != null) ? 1 : 2;
                 status_.msg    = (errmsg != null) ? errmsg : 'Ready';
                 callbacked = true;
@@ -166,8 +166,8 @@
     };
 
     ext.disconnect = function(arg0, arg1) {
-        var disconnect_ = function(_url, callback) {
-            var ws = ws_conn.get_(_url);
+        let disconnect_ = function(_url, callback) {
+            let ws = ws_conn.get_(_url);
             if(ws == null) {
                 console.log("ext.disconnect: callback %s not yet init", _url);
                 callback();
@@ -192,16 +192,16 @@
     };
 
     ext.send = function(data, _url) {
-        var ws = ws_conn.get_(_url);
+        let ws = ws_conn.get_(_url);
         console.log("ext.send: %s, %s %o", _url, ws.url, data);
         ws.send(data);
     };
 
     ext.getMessage = function(_url) {
         console.log("ext.getMessage: %s", _url);
-        for(var i=0; i<received_events.length; i++) {
+        for(let i=0; i<received_events.length; i++) {
             if(received_events[i].checked != defined && received_events[i].target.url == _url) {
-                var r = received_events.splice(i, 1);
+                let r = received_events.splice(i, 1);
                 return r[0];
             }
         }
@@ -218,7 +218,7 @@
     };
 
     ext.onMessageReceived = function() {
-        var chk = received_events.unchecked();
+        let chk = received_events.unchecked();
         if(chk != null) {
             chk.checked = true;
             return true;
@@ -230,13 +230,13 @@
 
     ext.emptyObject = function() {
         console.log("ext.emptyObject");
-        var obj = new Object();
+        let obj = new Object();
         return JSON.stringify(obj);
     };
 
     ext.addJsonProperty = function(propname, propvalue, jsonstr) {
         console.log("ext.addJsonProperty: %s %s %o", propname, propvalue, jsonstr);
-        var jsonobj = jsonstr;
+        let jsonobj = jsonstr;
         if(jQuery.type(jsonstr) == 'string') {
             jsonobj = JSON.parse(jsonstr);
         }
@@ -247,7 +247,7 @@
 
     ext.getJsonProperty = function(propname, jsonstr) {
         console.log("ext.getJsonProperty: %s %o", propname, jsonstr);
-        var jsonobj = jsonstr;
+        let jsonobj = jsonstr;
         if(jQuery.type(jsonstr) == 'string') {
             jsonobj = JSON.parse(jsonstr);
         }
@@ -264,4 +264,4 @@
     };
 
     return ext;
-})
+}
