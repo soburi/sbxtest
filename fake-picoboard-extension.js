@@ -111,15 +111,17 @@ new (function() {
         ScratchExtensions.register(name, descriptor, ext);
     };
 
-    if(document.ws_ext_init == undefined) {
+    //if(document.ws_ext_init == undefined) {
         var scriptpath = document.currentScript.src.match(/.*\//);
         $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
             document.ws_ext_init = ws_ext_init;
             fake_picoboard_ext_init(document.ws_ext_init);
         });
+    /*
     }
     else {
         fake_picoboard_ext_init(document.ws_ext_init);
     }
+    */
 
 })();
