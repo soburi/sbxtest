@@ -68,7 +68,7 @@ new (function() {
             if(recv.notify != undefined && recv.value != undefined) {
                 state_cache[recv.notify].value = recv.value;
             }
-        };
+        });
 
         ext.onButtonChanged = function(prop) {
             //console.log("ext.onButtonChanged: %s", prop);
