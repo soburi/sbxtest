@@ -149,7 +149,7 @@ function ws_ext_init(ext) {
             if( !ext.isInternalProcessEvent(event) ) {
                 received_events.push(event);
             }
-            let cloneevt = event.clone();
+            let cloneevt = jQuery.extend(true, {}, event);
             cloneevt.type = 'message-received';
             ext.dispatchEvent(cloneevt);
         });
