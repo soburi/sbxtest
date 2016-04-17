@@ -7,7 +7,7 @@ new (function() {
     document.addEventListener('DOMContentLoaded', function() {
     */
     var scriptpath = document.currentScript.src;
-    $.getScript('ws-ext.js', function(wsext, textStatus, jqxhr) {
+    $.getScript('http://soburi.github.io/sbxtest/ws-ext.js', function(wsext, textStatus, jqxhr) {
         wsext(this);
 
         // Block and block menu descriptions
