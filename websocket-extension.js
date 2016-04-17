@@ -20,7 +20,7 @@ new (function() {
 
     var ext = this;
     var scriptpath = document.currentScript.src.match(/.*\//);
-    $.getScript(scriptpath + '/ws-ext.js', function(wsext, textStatus, jqxhr) {
+    $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
         ws_ext_init(ext);
         ScratchExtensions.register(name, descriptor, ext);
     });

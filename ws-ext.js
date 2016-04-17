@@ -4,7 +4,7 @@ function ws_ext_init(ext) {
     var received_events_length = 20;
     var status_ = {status: 2, msg: 'Ready'};
 
-    ws_conn.get_ = function(_k) {
+    var connection = function(_k) {
         var ret = this[_k];
         if(ret != undefined)
             return ret;
@@ -16,6 +16,8 @@ function ws_ext_init(ext) {
         }
         return null;
     }.bind(ws_conn);
+    ws_conn.get_ = connection;
+    ext.connection = connection;
 
     ws_conn.getErrorReason = function() {
         var msg = null;
@@ -47,6 +49,11 @@ function ws_ext_init(ext) {
 
     ext._getStatus = function() {
         return status_;
+    };
+
+    ext.setErrorStatus = function(status, msg) {
+        status_.status = status;
+	status_.msg = msg;
     };
 
     ext.connect = function(_url, callback) {
