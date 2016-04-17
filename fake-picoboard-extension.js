@@ -106,28 +106,28 @@ new (function() {
         };
     };
 
-    var init = function() {
+    var init = function(ext) {
         if(document.fake_picoboard_ext_init == undefined) {
             var scriptpath = document.currentScript.src.match(/.*\//);
             $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-                document.fake_picoboard_ext_init = function(ext) {
-                    ws_ext_init(ext);
-                    fake_picoboard_init(ext);
+                document.fake_picoboard_ext_init = function(_ext) {
+                    ws_ext_init(_ext);
+                    fake_picoboard_init(_ext);
                     return ext;
                 };
-                var ext = document.fake_picoboard_ext_init(this);
+                document.fake_picoboard_ext_init(ext);
                 ScratchExtensions.register(name, descriptor, ext);
             });
         }
         else {
             var f = function() {
-                var ext = document.fake_picoboard_ext_init(this);
+                document.fake_picoboard_ext_init(ext);
                 ScratchExtensions.register(name, descriptor, ext);
             };
             f();
         }
     };
 
-    init();
+    init(this);
 
 })();
