@@ -1,7 +1,8 @@
-function ws_ext_init(ext) {
+(function (ext) {
     var ws_conn = {};
     var received_events = [];
     var received_events_length = 20;
+    var timeout_duration = 1000;
     var status_ = {status: 2, msg: 'Ready'};
 
     var connection = function(_k) {
@@ -94,7 +95,7 @@ function ws_ext_init(ext) {
                 console.log("ext.connect: %s timeout", _url);
                 callback();
             }
-        }, 3000 );
+        }, timeout_duration );
 
         ws.addEventListener('open', function(event) {
             console.log("%s: onopen", _url);
@@ -263,4 +264,4 @@ function ws_ext_init(ext) {
     };
 
     return ext;
-}
+})
