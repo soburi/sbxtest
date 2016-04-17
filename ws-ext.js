@@ -261,4 +261,6 @@ function ws_ext_init(ext) {
         }
         return null;
     };
+
+    return ext;
 }

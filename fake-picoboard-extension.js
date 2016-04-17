@@ -1,13 +1,12 @@
 new (function() {
     // Extension name
     var name = 'Fake-PicoBoard extension';
-    var ext = this;
     var state_cache = {};
     var reqid = 0;
 
     var scriptpath = document.currentScript.src.match(/.*\//);
     $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-        ws_ext_init(ext);
+        var ext = ws_ext_init(this);
 
         ext.getSensorValue = function(prop, callback) {
             console.log("ext.getSensorValue: %s %o", prop, callback);
