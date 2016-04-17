@@ -107,7 +107,7 @@ new (function() {
     };
 
     var init = function() {
-        if(document.fake_picoboard_ext_init == undefiend) {
+        if(document.fake_picoboard_ext_init == undefined) {
             var scriptpath = document.currentScript.src.match(/.*\//);
             $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
                 document.fake_picoboard_ext_init = function(ext) {
