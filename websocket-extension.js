@@ -8,7 +8,7 @@ new (function() {
     */
     var scriptpath = document.currentScript.src;
     $.getScript('http://soburi.github.io/sbxtest/ws-ext.js', function(wsext, textStatus, jqxhr) {
-        wsext(this);
+        ws_ext_init(this);
 
         // Block and block menu descriptions
         var descriptor = {
