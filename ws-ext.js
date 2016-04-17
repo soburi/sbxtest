@@ -1,4 +1,4 @@
-function ws_ext_init(ext) {
+(function ws_ext_init(ext) {
     let ws_conn = {};
     let received_events = [];
     let received_events_length = 20;
@@ -264,4 +264,4 @@ function ws_ext_init(ext) {
     };
 
     return ext;
-}
+})
