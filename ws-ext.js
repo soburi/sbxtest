@@ -149,7 +149,7 @@ function ws_ext_init(ext) {
             if( !ext.isInternalProcessEvent(event) ) {
                 received_events.push(event);
             }
-            let evt = new MessageEvent('message-received'
+            let evt = new MessageEvent('message-received',
                     {
                         data: event.data,
                         origin = event.origin;
