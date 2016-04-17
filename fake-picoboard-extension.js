@@ -107,6 +107,8 @@ new (function() {
                 }
             });
         };
+
+        return ext;
     };
 
     var init = function() {
