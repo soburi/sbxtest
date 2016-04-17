@@ -1,6 +1,4 @@
 function ws_ext_init(ext) {
-}
-/*
     var ws_conn = {};
     var received_events = [];
     var received_events_length = 20;
@@ -256,4 +254,6 @@ function ws_ext_init(ext) {
         }
         return null;
     };
-*/
+}
+
+ws_ext_init;
