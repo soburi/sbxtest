@@ -3,8 +3,6 @@ new (function() {
     var name = 'Fake-PicoBoard extension';
     var state_cache = {};
     var reqid = 0;
-
-
     
     // Block and block menu descriptions
     var descriptor = {
@@ -23,8 +21,7 @@ new (function() {
         },
     };
 
-    var fakepicoboard_init = function(ext) {
-
+    var fake_picoboard_init = function(ext) {
         ext.getSensorValue = function(prop, callback) {
             console.log("ext.getSensorValue: %s %o", prop, callback);
             var req = {"request": prop, "reqid":reqid};
@@ -107,23 +104,24 @@ new (function() {
                 }
             });
         };
-
-        return ext;
     };
 
     var init = function() {
-        var initfunc = null;
-        if(initfunc == null) {
+        if(document.fake_picoboard_ext_init == undefiend) {
             var scriptpath = document.currentScript.src.match(/.*\//);
             $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-                initfunc = ws_ext_init;
-                var ext = fakepicoboard_init( initfunc(this) );
+                document.fake_picoboard_ext_init = function(ext) {
+                    ws_ext_init(ext);
+                    fake_picoboard_init(ext);
+                    return ext;
+                };
+                var ext = document.fake_picoboard_ext_init(this);
                 ScratchExtensions.register(name, descriptor, ext);
             });
         }
         else {
             var f = function() {
-                var ext = fakepicoboard_init( initfunc(this) );
+                var ext = document.fake_picoboard_ext_init(this);
                 ScratchExtensions.register(name, descriptor, ext);
             };
             f();
