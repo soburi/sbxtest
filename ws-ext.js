@@ -255,5 +255,3 @@ function ws_ext_init(ext) {
         return null;
     };
 }
-
-ws_ext_init;
