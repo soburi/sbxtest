@@ -4,7 +4,7 @@ new (function() {
     var state_cache = {};
     var reqid = 0;
 
-    var ext_ = this;
+    var ext = this;
     
     // Block and block menu descriptions
     var descriptor = {
@@ -23,7 +23,9 @@ new (function() {
         },
     };
 
-    var fake_picoboard_ext_init = function(ext) {
+    var fake_picoboard_ext_init = function(ws_init) {
+        ws_init(ext);
+
         ext.getSensorValue = function(prop, callback) {
             console.log("ext.getSensorValue: %s %o", prop, callback);
             var req = {"request": prop, "reqid":reqid};
@@ -106,30 +108,21 @@ new (function() {
                 }
             });
         };
-    };
-
-    var xinit = function(initfunc) {
-        initfunc(ext);
-        fake_picoboard_ext_init(ext);
         ScratchExtensions.register(name, descriptor, ext);
     };
 
-    var init = function(ext) {
-        if(document.ws_ext_init == undefined) {
-            var scriptpath = document.currentScript.src.match(/.*\//);
-            $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-                document.ws_ext_init = ws_ext_init;
-                xinit(document.ws_ext_init);
-            });
-        }
-        else {
-            var f = function() {
-                xinit(document.ws_ext_init);
-            };
-            f();
-        }
-    };
-
-    init(ext_);
+    if(document.ws_ext_init == undefined) {
+        var scriptpath = document.currentScript.src.match(/.*\//);
+        $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
+            document.ws_ext_init = ws_ext_init;
+            fake_picoboard_ext_init(document.ws_ext_init);
+        });
+    }
+    else {
+        var f = function() {
+            fake_picoboard_ext_init(document.ws_ext_init);
+        };
+        f();
+    }
 
 })();
