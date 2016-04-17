@@ -1,5 +1,6 @@
-function(ext) {
+var _ws_ext_function = function(ext) {
 }
+return _ws_ext_function;
 /*
     var ws_conn = {};
     var received_events = [];
