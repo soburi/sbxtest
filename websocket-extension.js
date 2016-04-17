@@ -20,9 +20,10 @@ new (function() {
 
     var ext = this;
     var scriptpath = document.currentScript.src.match(/.*\//);
-    $.getScript(scriptpath + 'ws-ext.js', function(ws_ext, textStatus, jqxhr) {
-        ws_ext_init(ext);
-        ScratchExtensions.register(name, descriptor, ext);
-    });
+    $.getScript(scriptpath + 'ws-ext.js')//, function(ws_ext, textStatus, jqxhr) {
+        .done( function(ws_ext, textStatus) {
+            ws_ext_init(ext);
+            ScratchExtensions.register(name, descriptor, ext);
+        });
 
 })();
