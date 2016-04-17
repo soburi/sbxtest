@@ -55,10 +55,9 @@ function ws_ext_init(ext) {
     }.bind(received_events);
 
     var eventTarget = document.createDocumentFragment();
-
-    var delegate = function (mtd) { this[mtd] = eventTarget[mtd].bind(eventTarget); }
-    [ "addEventListener", "dispatchEvent", "removeEventListener" ]
-        .forEach(delegate, ext);
+    ext.addEventListener    = eventTarget.addEventListener.bind(eventTarget);
+    ext.removeEventListener = eventTarget.removeEventListener.bind(eventTarget);
+    ext.dispatchEvent       = eventTarget.dispatchEvent.bind(eventTarget);
 
 
     ext._shutdown = function() {
