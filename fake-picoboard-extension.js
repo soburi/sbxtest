@@ -109,9 +109,9 @@ new (function() {
     };
 
     var xinit = function(initfunc) {
-        initfunc(this);
-        fake_picoboard_ext_init(this);
-        ScratchExtensions.register(name, descriptor, this);
+        initfunc(ext);
+        fake_picoboard_ext_init(ext);
+        ScratchExtensions.register(name, descriptor, ext);
     };
 
     var init = function(ext) {
