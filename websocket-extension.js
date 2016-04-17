@@ -1,5 +1,5 @@
 new (function() {
-    var srcipt = document.createElement('script');
+    var script = document.createElement('script');
     script.src = './ws-ext.js';
     document.getElementsByTagName("head")[0].appendChild(script);
 
