@@ -1,10 +1,9 @@
 new (function() {
-    var doc = $(document);
-    var src = $(document).createElement('script');
+    var src = document.createElement('script');
     src.src = './ws-ext.js';
-    $(document).getElementsByTagName("head")[0].appendChild(scr);
+    document.getElementsByTagName("head")[0].appendChild(scr);
 
-    $(document).ready( function() {
+    document.ready( function() {
 
         wsext(this);
 
