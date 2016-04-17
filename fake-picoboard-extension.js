@@ -3,6 +3,8 @@ new (function() {
     var name = 'Fake-PicoBoard extension';
     var state_cache = {};
     var reqid = 0;
+
+    var ext_ = this;
     
     // Block and block menu descriptions
     var descriptor = {
@@ -128,6 +130,6 @@ new (function() {
         }
     };
 
-    init(this);
+    init(ext_);
 
 })();
