@@ -4,9 +4,26 @@ new (function() {
     var state_cache = {};
     var reqid = 0;
 
-    var scriptpath = document.currentScript.src.match(/.*\//);
-    $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-        var ext = ws_ext_init(this);
+
+    
+    // Block and block menu descriptions
+    var descriptor = {
+        blocks: [
+            ['w', 'connect to %s', 'connect'],
+            ['w', 'disconnect', 'disconnect'],
+            ['R', 'sensor %m.buttonStatus sensor value', 'getSensorValue'],
+            ['R', '%m.sensorType sensor value', 'getSensorValue'],
+            ['h', 'when %m.buttonStatus', 'onButtonChanged'],
+            ['h', 'when %m.sensorType %m.lessMore %n', 'onSensorValueChanged'],
+        ],
+        menus: {
+            lessMore: ['<', '>'],
+            buttonStatus: ['button pressed', 'A connected', 'B connected', 'C connected', 'D connected'],
+            sensorType: ['slider', 'light', 'sound', 'resistance-A', 'resistance-B', 'resistance-C', 'resistance-D'],
+        },
+    };
+
+    var fakepicoboard_init = function(ext) {
 
         ext.getSensorValue = function(prop, callback) {
             console.log("ext.getSensorValue: %s %o", prop, callback);
@@ -90,25 +107,26 @@ new (function() {
                 }
             });
         };
+    };
 
-        // Block and block menu descriptions
-        var descriptor = {
-            blocks: [
-                ['w', 'connect to %s', 'connect'],
-                ['w', 'disconnect', 'disconnect'],
-                ['R', 'sensor %m.buttonStatus sensor value', 'getSensorValue'],
-                ['R', '%m.sensorType sensor value', 'getSensorValue'],
-                ['h', 'when %m.buttonStatus', 'onButtonChanged'],
-                ['h', 'when %m.sensorType %m.lessMore %n', 'onSensorValueChanged'],
-            ],
-            menus: {
-                lessMore: ['<', '>'],
-                buttonStatus: ['button pressed', 'A connected', 'B connected', 'C connected', 'D connected'],
-                sensorType: ['slider', 'light', 'sound', 'resistance-A', 'resistance-B', 'resistance-C', 'resistance-D'],
-            },
-        };
+    var init = function() {
+        var initfunc = null;
+        if(initfunc == null) {
+            var scriptpath = document.currentScript.src.match(/.*\//);
+            $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
+                initfunc = ws_ext_init;
+                var ext = fakepicoboard_init( initfunc(this) );
+                ScratchExtensions.register(name, descriptor, ext);
+            });
+        }
+        else {
+            function() {
+                var ext = fakepicoboard_init( initfunc(this) );
+                ScratchExtensions.register(name, descriptor, ext);
+            }();
+        }
+    };
 
-        ScratchExtensions.register(name, descriptor, ext);
-    });
+    init();
 
 })();
