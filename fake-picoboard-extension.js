@@ -21,7 +21,7 @@ new (function() {
         },
     };
 
-    var fake_picoboard_init = function(ext) {
+    var fake_picoboard_ext_init = function(ext) {
         ext.getSensorValue = function(prop, callback) {
             console.log("ext.getSensorValue: %s %o", prop, callback);
             var req = {"request": prop, "reqid":reqid};
