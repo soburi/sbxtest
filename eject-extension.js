@@ -52,19 +52,12 @@ new (function() {
         ScratchExtensions.register(name, descriptor, ext);
     };
 
-    if(document._ext_init == undefined) {
-        var scriptpath = document.currentScript.src.match(/.*\//);
-        $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-            document._ext_init = function(ext) {
-                document._ext_init(ext);
-                eject_ext_init(ext);
-            };
-            document.ext_init(ext_);
+    var scriptpath = document.currentScript.src.match(/.*\//);
+    $.getScript(scriptpath + 'ws-ext.js')
+        .done( function(ws_ext, textStatus) {
+            ws_ext_init(ext);
+            eject_ext_init(ext);
+            ScratchExtensions.register(name, descriptor, ext);
         });
-    }
-    else {
-        // Suppress reload with differnt url for easy to debugging.
-        document._ext_init(ext_);
-    }
 
 })();

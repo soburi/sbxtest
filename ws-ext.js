@@ -1,11 +1,11 @@
-(function ws_ext_init(ext) {
+function ws_ext_init(ext) {
     let ws_conn = {};
     let received_events = [];
     let received_events_length = 20;
     let timeout_duration = 1000;
     let status_ = {status: 2, msg: 'Ready'};
 
-    let connection = function(_k) {
+    let getConnection = function(_k) {
         let ret = this[_k];
         if(ret != undefined)
             return ret;
@@ -17,8 +17,18 @@
         }
         return null;
     }.bind(ws_conn);
-    ws_conn.get_ = connection;
-    ext.getConnection = connection;
+    ext.getConnection = getConnection;
+
+    let disposeEvent = function(e) {
+        let i=0;
+        for(i=0; i<received_events.length; i++) {
+            if(received_events[i] === e) {
+                received_events.splice(i, 1);
+                return;
+            }
+        }
+    }
+    ext.disposeEvent = disposeEvent;
 
     ws_conn.getErrorReason = function() {
         let msg = null;
@@ -54,7 +64,7 @@
 
     ext.setErrorStatus = function(status, msg) {
         status_.status = status;
-	status_.msg = msg;
+        status_.msg = msg;
     };
 
     ext.connect = function(_url, callback) {
@@ -127,6 +137,7 @@
                 received_events.shift();
             }
             received_events.push(event);
+            ext.dispatchEvent('message-received', event);
         });
         
         ws.addEventListener('close', function(event) {
@@ -167,7 +178,7 @@
 
     ext.disconnect = function(arg0, arg1) {
         let disconnect_ = function(_url, callback) {
-            let ws = ws_conn.get_(_url);
+            let ws = ext.getConnection(_url);
             if(ws == null) {
                 console.log("ext.disconnect: callback %s not yet init", _url);
                 callback();
@@ -192,7 +203,7 @@
     };
 
     ext.send = function(data, _url) {
-        let ws = ws_conn.get_(_url);
+        let ws = ext.getConnection(_url);
         console.log("ext.send: %s, %s %o", _url, ws.url, data);
         ws.send(data);
     };
@@ -264,4 +275,4 @@
     };
 
     return ext;
-})
+}

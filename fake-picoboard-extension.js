@@ -42,7 +42,7 @@ new (function() {
             setTimeout( function() {
                 if(!callbacked) {
                     callbacked = true;
-		    ext.setErrorStatus(1, "getSensorValue: Request timeout");
+                    ext.setErrorStatus(1, "getSensorValue: Request timeout");
                     console.log("%s: getSensorValue: timeout, callback", ws.url);
                     callback(-1);
                 }
@@ -112,19 +112,12 @@ new (function() {
         ScratchExtensions.register(name, descriptor, ext);
     };
 
-    if(document._ext_init == undefined) {
-        var scriptpath = document.currentScript.src.match(/.*\//);
-        $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-            document._ext_init = function(ext) {
-                document._ext_init(ext);
-                fake_picoboard_ext_init(ext);
-            };
-            document.ext_init(ext_);
+    var scriptpath = document.currentScript.src.match(/.*\//);
+    $.getScript(scriptpath + 'ws-ext.js')
+        .done( function(ws_ext, textStatus) {
+            ws_ext_init(ext_);
+            fake_picoboard_ext_init(ext_);
+            ScratchExtensions.register(name, descriptor, ext_);
         });
-    }
-    else {
-        // Suppress reload with differnt url for easy to debugging.
-        document._ext_init(ext_);
-    }
-
+    
 })();
