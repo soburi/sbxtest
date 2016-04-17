@@ -106,23 +106,23 @@ new (function() {
         };
     };
 
+    var xinit = function(initfunc) {
+        initfunc(this);
+        fake_picoboard_ext_init(this);
+        ScratchExtensions.register(name, descriptor, ext);
+    };
+
     var init = function(ext) {
-        if(document.fake_picoboard_ext_init == undefined) {
+        if(document.ws_ext_init == undefined) {
             var scriptpath = document.currentScript.src.match(/.*\//);
             $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-                document.fake_picoboard_ext_init = function(_ext) {
-                    ws_ext_init(_ext);
-                    fake_picoboard_init(_ext);
-                    return ext;
-                };
-                document.fake_picoboard_ext_init(ext);
-                ScratchExtensions.register(name, descriptor, ext);
+                document.ws_ext_init = ws_ext_init;
+                xinit(document.ws_ext_init);
             });
         }
         else {
             var f = function() {
-                document.fake_picoboard_ext_init(ext);
-                ScratchExtensions.register(name, descriptor, ext);
+                xinit(document.ws_ext_init);
             };
             f();
         }
