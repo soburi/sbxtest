@@ -1,10 +1,5 @@
 new (function() {
-    var src = $(document).createElement('script');
-    src.src = './ws-ext.js';
-    $(document).getElementsByTagName("head")[0].appendChild(scr);
-
-    $(document).ready( function() {
-
+    var wsext = require('./ws-ext.js')
         wsext(this);
 
         // Block and block menu descriptions
