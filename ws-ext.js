@@ -152,7 +152,7 @@ function ws_ext_init(ext) {
             let evt = new MessageEvent('message-received',
                     {
                         data: event.data,
-                        origin = event.origin;
+                        origin: event.origin,
                         currentTarget: event.currentTarget,
                         srcElement: event.srcElement,
                         target: event.target
