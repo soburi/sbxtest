@@ -1,11 +1,11 @@
 new (function() {
-    var ext_ = this;
+    let ext_ = this;
 
     // Extension name
-    var name = 'Fake-PicoBoard extension';
+    let name = 'Fake-PicoBoard extension';
 
     // Block and block menu descriptions
-    var descriptor = {
+    let descriptor = {
         blocks: [
             ['w', 'connect to %s', 'connect'],
             ['w', 'disconnect', 'disconnect'],
@@ -21,23 +21,22 @@ new (function() {
         },
     };
 
-    var fake_picoboard_ext_init = function(ext) {
+    let fake_picoboard_ext_init = function(ext) {
 
-        var state_cache = {};
-        var reqid = 0;
+        let state_cache = {};
 
         ext.getSensorValue = function(prop, callback) {
             console.log("ext.getSensorValue: %s %o", prop, callback);
-            var req = {"request": prop, "reqid":reqid};
+            let req = {"request": prop};
 
-            var ws = ext.getConnection(null);
+            let ws = ext.getConnection(null);
             if(ws == null) {
                 console.log("%s getSensorValue: not yet init", ws.url);
                 callback(-1);
                 return;
             }
 
-            var callbacked = false;
+            let callbacked = false;
             
             setTimeout( function() {
                 if(!callbacked) {
@@ -49,70 +48,64 @@ new (function() {
             }, 3000 );
 
             ext.addEventListener('message-received', function(event) {
-                var resp = JSON.parse(event.data);
-                var _req = req;
+                let resp = JSON.parse(event.data);
                 if(!callbacked) {
-                    if(resp.response == prop) {
+                    if(resp.response != undefined && resp.value != undefined && resp.response == prop) {
                         callbacked = true;
                         console.log("%s onmessage: getSensorValue callback:%d response:%o", ws.url, resp.value, resp);
+                        state_cache[prop].value = resp.value;
                         callback(resp.value);
                     }
                 }
             });
 
             ext.send(JSON.stringify(req), null);
-            reqid++;
         };
 
 
-        var state_received = function(event) {
-            var resp = JSON.parse(event.data);
-            var oldval = state_cache[resp.notify];
-            state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
+        ext.addEventListener('message-received', function(event) {
+            let recv = JSON.parse(event.data);
+            if(recv.notify != undefined && recv.value != undefined) {
+                state_cache[recv.notify].value = recv.value;
+            }
         };
 
         ext.onButtonChanged = function(prop) {
-            console.log("ext.onButtonChanged: %s", prop);
-            var ws = ext.getConnection(null);
+            //console.log("ext.onButtonChanged: %s", prop);
+            let ws = ext.getConnection(null);
             if(ws == null) return false;
 
-            ext.addEventListener('message-received', function(event) {
-                var resp = JSON.parse(event.data);
-                var oldval = state_cache[resp.notify];
-                state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
-                
-                if(state_cache[prop].update && state_cache[prop].value != 0) {
-                    return true;
-                }
-            })
+            let last_probed = state_cache[prop].last_probed;
+            let new_value = state_cache[prop].value;
+            state_cache[prop].last_probed = state_cache[prop].value;
+            if(last_probed != new_value) {
+                return true;
+            }
+            return false;
         };
 
         ext.onSensorValueChanged = function(prop, lessmore, threshold) {
-            console.log("ext.onSensorValueChanged: %s %s %d", prop, lessmore, threshold);
-            var ws = ext.getConnection(null);
+            //console.log("ext.onSensorValueChanged: %s %s %d", prop, lessmore, threshold);
+            let ws = ext.getConnection(null);
             if(ws == null) return false;
 
-            ext.addEventListener('message-received', function(event) {
-                var resp = JSON.parse(event.data);
-                var oldval = state_cache[resp.notify];
-                state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
-                
-                var value = state_cache[prop].value;
-                if(state_cache[prop].update) {
-                    if(lessmore == '<') {
-                        return (value < threshold);
-                    }
-                    else {
-                        return (value > threshold);
-                    }
+            let last_probed = state_cache[prop].last_probed;
+            let new_value = state_cache[prop].value;
+            state_cache[prop].last_probed = state_cache[prop].value;
+            if(last_probed != new_value) {
+                if( (lessmore == '<' && last_probed >= threshold && new_value < threshold)  &&
+                    (lessmore == '>' && last_probed <= threshold && new_value > threshold) ) {
+                        return true;
                 }
-            });
+            }
+            
+            return false;
         };
 
         ScratchExtensions.register(name, descriptor, ext);
     };
 
-    var scriptpath = document.currentScript.src.match(/.*\//);
+    let scriptpath = document.currentScript.src.match(/.*\//);
     $.getScript(scriptpath + 'ws-ext.js')
         .done( function(ws_ext, textStatus) {
             ws_ext_init(ext_);

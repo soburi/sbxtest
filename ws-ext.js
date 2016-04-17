@@ -62,7 +62,6 @@ function ws_ext_init(ext) {
     ext.setInternalEventCheckHook = function(fn) {
         ext.isInternalProcessEvent = fn;
     }
-
     ext.setInternalEventCheckHook( function(event) { return false; } );
 
     ext._shutdown = function() {
