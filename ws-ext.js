@@ -1,4 +1,6 @@
 function(ext) {
+}
+/*
     var ws_conn = {};
     var received_events = [];
     var received_events_length = 20;
@@ -254,4 +256,4 @@ function(ext) {
         }
         return null;
     };
-}
+*/
