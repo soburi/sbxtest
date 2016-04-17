@@ -48,7 +48,7 @@ new (function() {
                 }
             }, 3000 );
 
-            ws.addEventListener('message', function(event) {
+            ext.addEventListener('message-received', function(event) {
                 var resp = JSON.parse(event.data);
                 var _req = req;
                 if(!callbacked) {
@@ -76,7 +76,7 @@ new (function() {
             var ws = ext.getConnection(null);
             if(ws == null) return false;
 
-            ws.addEventListener('message', function(event) {
+            ext.addEventListener('message-received', function(event) {
                 var resp = JSON.parse(event.data);
                 var oldval = state_cache[resp.notify];
                 state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
@@ -92,7 +92,7 @@ new (function() {
             var ws = ext.getConnection(null);
             if(ws == null) return false;
 
-            ws.addEventListener('message', function(event) {
+            ext.addEventListener('message-received', function(event) {
                 var resp = JSON.parse(event.data);
                 var oldval = state_cache[resp.notify];
                 state_cache[resp.notify] = { update: (oldval == resp.value), value: resp.value };
@@ -117,7 +117,6 @@ new (function() {
         .done( function(ws_ext, textStatus) {
             ws_ext_init(ext_);
             fake_picoboard_ext_init(ext_);
-            ScratchExtensions.register(name, descriptor, ext_);
         });
     
 })();

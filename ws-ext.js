@@ -59,6 +59,11 @@ function ws_ext_init(ext) {
     ext.removeEventListener = eventTarget.removeEventListener.bind(eventTarget);
     ext.dispatchEvent       = eventTarget.dispatchEvent.bind(eventTarget);
 
+    ext.setInternalEventCheckHook = function(fn) {
+        ext.isInternalProcessEvent = fn;
+    }
+
+    ext.setInternalEventCheckHook( function(event) { return false; } );
 
     ext._shutdown = function() {
         for(k in ws_conn) ws_conn[k].close();
@@ -142,7 +147,9 @@ function ws_ext_init(ext) {
             if(received_events.length = received_events_length) {
                 received_events.shift();
             }
-            received_events.push(event);
+            if( !ext.isInternalProcessEvent(event) ) {
+                received_events.push(event);
+            }
             ext.dispatchEvent('message-received', event);
         });
         
