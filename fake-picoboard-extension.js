@@ -120,10 +120,11 @@ new (function() {
             });
         }
         else {
-            function() {
+            var f = function() {
                 var ext = fakepicoboard_init( initfunc(this) );
                 ScratchExtensions.register(name, descriptor, ext);
-            }();
+            };
+            f();
         }
     };
 
