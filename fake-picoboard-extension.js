@@ -6,23 +6,6 @@ new (function() {
 
     var ext = this;
     
-    // Block and block menu descriptions
-    var descriptor = {
-        blocks: [
-            ['w', 'connect to %s', 'connect'],
-            ['w', 'disconnect', 'disconnect'],
-            ['R', 'sensor %m.buttonStatus sensor value', 'getSensorValue'],
-            ['R', '%m.sensorType sensor value', 'getSensorValue'],
-            ['h', 'when %m.buttonStatus', 'onButtonChanged'],
-            ['h', 'when %m.sensorType %m.lessMore %n', 'onSensorValueChanged'],
-        ],
-        menus: {
-            lessMore: ['<', '>'],
-            buttonStatus: ['button pressed', 'A connected', 'B connected', 'C connected', 'D connected'],
-            sensorType: ['slider', 'light', 'sound', 'resistance-A', 'resistance-B', 'resistance-C', 'resistance-D'],
-        },
-    };
-
     var fake_picoboard_ext_init = function(ws_init) {
         ws_init(ext);
 
@@ -108,20 +91,36 @@ new (function() {
                 }
             });
         };
+
+        // Block and block menu descriptions
+        var descriptor = {
+            blocks: [
+                ['w', 'connect to %s', 'connect'],
+                ['w', 'disconnect', 'disconnect'],
+                ['R', 'sensor %m.buttonStatus sensor value', 'getSensorValue'],
+                ['R', '%m.sensorType sensor value', 'getSensorValue'],
+                ['h', 'when %m.buttonStatus', 'onButtonChanged'],
+                ['h', 'when %m.sensorType %m.lessMore %n', 'onSensorValueChanged'],
+            ],
+            menus: {
+                lessMore: ['<', '>'],
+                buttonStatus: ['button pressed', 'A connected', 'B connected', 'C connected', 'D connected'],
+                sensorType: ['slider', 'light', 'sound', 'resistance-A', 'resistance-B', 'resistance-C', 'resistance-D'],
+            },
+        };
+
         ScratchExtensions.register(name, descriptor, ext);
     };
 
-    //if(document.ws_ext_init == undefined) {
+    if(document.fake_picoboard_ext_init == undefined) {
         var scriptpath = document.currentScript.src.match(/.*\//);
         $.getScript(scriptpath + 'ws-ext.js', function(wsext, textStatus, jqxhr) {
-            document.ws_ext_init = ws_ext_init;
-            fake_picoboard_ext_init(document.ws_ext_init);
+            document.fake_picoboard_ext_init = fake_picoboard_ext_init;
+            document.fake_picoboard_ext_init(ws_ext_init);
         });
-    /*
     }
     else {
-        fake_picoboard_ext_init(document.ws_ext_init);
+        document.fake_picoboard_ext_init(ws_ext_init);
     }
-    */
 
 })();
