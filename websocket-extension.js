@@ -1,5 +1,11 @@
 new (function() {
-    var wsext = require('./ws-ext.js')
+    var doc = $(document);
+    var src = $(document).createElement('script');
+    src.src = './ws-ext.js';
+    $(document).getElementsByTagName("head")[0].appendChild(scr);
+
+    $(document).ready( function() {
+
         wsext(this);
 
         // Block and block menu descriptions
@@ -21,4 +27,5 @@ new (function() {
 
         // Register the extension
         ScratchExtensions.register('WebSocket extension', descriptor, ext);
+    });
 })();
