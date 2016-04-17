@@ -6,6 +6,7 @@ new (function() {
     
     document.addEventListener('DOMContentLoaded', function() {
     */
+    var scriptpath = document.currentScript.src;
     $.getScript('ws-ext.js', function(wsext, textStatus, jqxhr) {
         wsext(this);
 
