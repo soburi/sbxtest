@@ -1,10 +1,12 @@
 new (function() {
+    /*
     var script = document.createElement('script');
     script.src = './ws-ext.js';
     document.getElementsByTagName("head")[0].appendChild(script);
-
-    document.ready( function() {
-
+    
+    document.addEventListener('DOMContentLoaded', function() {
+    */
+    $.getScript('ws-ext.js'), function(wsext, textStatus, jqxhr) {
         wsext(this);
 
         // Block and block menu descriptions
