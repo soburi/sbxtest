@@ -36,7 +36,7 @@ new (function() {
                 return true;
             }
             return false;
-        }
+        };
 
         ext.onDriveClosed = function() {
             var ws = ext.getConnection(null);
@@ -45,8 +45,7 @@ new (function() {
                 return true;
             }
             return false;
-        }
-
+        };
 
         // Register the extension
         ScratchExtensions.register(name, descriptor, ext);
@@ -57,7 +56,6 @@ new (function() {
         .done( function(ws_ext, textStatus) {
             ws_ext_init(ext_);
             eject_ext_init(ext_);
-            ScratchExtensions.register(name, descriptor, ext_);
         });
 
 })();

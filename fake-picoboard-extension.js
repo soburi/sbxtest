@@ -17,7 +17,8 @@ new (function() {
         menus: {
             lessMore: ['<', '>'],
             buttonStatus: ['button pressed', 'A connected', 'B connected', 'C connected', 'D connected'],
-            sensorType: ['slider', 'light', 'sound', 'resistance-A', 'resistance-B', 'resistance-C', 'resistance-D'],
+            sensorType: ['slider'],
+            //sensorType: ['slider', 'light', 'sound', 'resistance-A', 'resistance-B', 'resistance-C', 'resistance-D'],
         },
     };
 
@@ -68,16 +69,25 @@ new (function() {
             ext.send(JSON.stringify(req), null);
         };
 
+        ext.isInternalProcessEvent = function(event) {
+            let recv = JSON.parse(event.data);
+            return (recv.response != undefined);
+        };
 
         ext.addEventListener('message-received', function(event) {
             let recv = JSON.parse(event.data);
-            if(recv.notify != undefined && recv.value != undefined) {
-                let state = state_cache[recv.notify];
-                if(state != null) {
-                    state_cache[recv.notify].value = recv.value;
-                }
-                else {
-                    state_cache[recv.notify] = { last_probed: resp.value, value: resp.value };
+            if(recv.notify != undefined) {
+
+                for(k in recv.notify) {
+
+                    let state = state_cache[k];
+                    if(state != null) {
+                        state_cache[k].value = recv.notify[k];
+                    }
+                    else {
+                        state_cache[k] = { last_probed: recv.notify[k], value: recv.notify[k] };
+                    }
+
                 }
             }
         });

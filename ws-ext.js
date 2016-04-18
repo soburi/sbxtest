@@ -150,18 +150,17 @@ function ws_ext_init(ext) {
                 received_events.push(event);
             }
             let evt = new MessageEvent('message-received',
-                    {
-                        data: event.data,
-                        origin: event.origin,
-                        currentTarget: event.currentTarget,
-                        srcElement: event.srcElement,
-                        target: event.target
-                    });
+                {
+                    data: event.data,
+                    origin: event.origin,
+                    currentTarget: event.currentTarget,
+                    srcElement: event.srcElement,
+                    target: event.target
+                });
             ext.dispatchEvent(evt);
         });
         
         ws.addEventListener('close', function(event) {
-            console.log("%s: onclose: %d", ws.url, event.code);
                  if(event.code == 1001) reason = "1000: CLOSE_NORMAL";
             else if(event.code == 1001) reason = "1001: CLOSE_GOING_AWAY";
             else if(event.code == 1002) reason = "1002: CLOSE_PROTOCOL_ERROR";
@@ -179,6 +178,8 @@ function ws_ext_init(ext) {
             else if(event.code == 1014) reason = "1014: RESERVED";
             else if(event.code == 1015) reason = "1015: TLS Handshake";
             else                        reason = "" + event.code + ": Unknown reason";
+
+            console.log("%s: onclose: %s", ws.url, reason);
 
             if(event.code != 1000) {
                 ws.close_status_ = event.code;
