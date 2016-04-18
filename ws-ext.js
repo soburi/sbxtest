@@ -1,4 +1,4 @@
-function ws_ext_init(ext) {
+function ws_ext_init(ext, emitter) {
     let ws_conn = {};
     let received_events = [];
     let received_events_length = 20;
@@ -54,10 +54,10 @@ function ws_ext_init(ext) {
         return null;
     }.bind(received_events);
 
-    var eventTarget = document.createDocumentFragment();
-    ext.addEventListener    = eventTarget.addEventListener.bind(eventTarget);
-    ext.removeEventListener = eventTarget.removeEventListener.bind(eventTarget);
-    ext.dispatchEvent       = eventTarget.dispatchEvent.bind(eventTarget);
+    //var eventTarget = document.createDocumentFragment();
+    ext.addEventListener    = emitter.addEventListener.bind(emitter);
+    ext.removeEventListener = emitter.removeEventListener.bind(emitter);
+    ext.dispatchEvent       = emitter.dispatchEvent.bind(emitter);
 
     ext.setInternalEventCheckHook = function(fn) {
         ext.isInternalProcessEvent = fn;

@@ -42,8 +42,7 @@ new (function() {
 
 
         ext.isInternalProcessEvent = function(event) {
-            let recv = JSON.parse(event.data);
-            return (recv.response == undefined);
+            return true;
         };
 
         ext.addEventListener('message-received', function(event) {
@@ -67,11 +66,14 @@ new (function() {
             //console.log("ext.getSensorValue: %s %o", prop, callback);
 
             let key = proptable[prop];
+            if(key == undefined) return "";
 
-            if(status_cache[key] == undefined) return "";
-            if(status_cache[key].value == undefined) return "";
+            let state = state_cache[key];
+            if(state == undefined) return "";
+
+            if(state.value == undefined) return "";
             
-            return state_cache[key].value;
+            return state.value;
         };
 
         ext.getSensorBoolValue = function(prop) {
@@ -92,9 +94,11 @@ new (function() {
             let last_probed = state.last_probed;
             let new_value = state.value;
             state_cache[key].last_probed = state.value;
+
             if(last_probed != new_value && new_value == true) {
                 return true;
             }
+
             return false;
         };
 
@@ -112,6 +116,7 @@ new (function() {
             let last_probed = state.last_probed;
             let new_value = state.value;
             state_cache[prop].last_probed = state.value;
+
             if(last_probed != new_value) {
                 if( (lessmore == '<' && last_probed >= threshold && new_value < threshold)  &&
                     (lessmore == '>' && last_probed <= threshold && new_value > threshold) ) {
@@ -128,7 +133,8 @@ new (function() {
     let scriptpath = document.currentScript.src.match(/.*\//);
     $.getScript(scriptpath + 'ws-ext.js')
         .done( function(ws_ext, textStatus) {
-            ws_ext_init(ext_);
+            var eventTarget = document.currentScript;
+            ws_ext_init(ext_, eventTarget);
             fake_picoboard_ext_init(ext_);
         });
     
