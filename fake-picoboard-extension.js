@@ -111,9 +111,12 @@ new (function() {
             let ws = ext.getConnection(null);
             if(ws == null) return false;
 
-            let last_probed = state_cache[prop].last_probed;
-            let new_value = state_cache[prop].value;
-            state_cache[prop].last_probed = state_cache[prop].value;
+            let key = "";
+            if(prop == "button pressed") key = "button";
+
+            let last_probed = state_cache[key].last_probed;
+            let new_value = state_cache[key].value;
+            state_cache[key].last_probed = state_cache[key].value;
             if(last_probed != new_value) {
                 if( (lessmore == '<' && last_probed >= threshold && new_value < threshold)  &&
                     (lessmore == '>' && last_probed <= threshold && new_value > threshold) ) {
