@@ -71,7 +71,7 @@ new (function() {
 
         ext.isInternalProcessEvent = function(event) {
             let recv = JSON.parse(event.data);
-            return (recv.response != undefined);
+            return (recv.response == undefined);
         };
 
         ext.addEventListener('message-received', function(event) {
