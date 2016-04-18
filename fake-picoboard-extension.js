@@ -100,7 +100,7 @@ new (function() {
             let last_probed = state_cache[prop].last_probed;
             let new_value = state_cache[prop].value;
             state_cache[prop].last_probed = state_cache[prop].value;
-            if(last_probed != new_value) {
+            if(last_probed != new_value && new_value == true) {
                 return true;
             }
             return false;
