@@ -88,6 +88,7 @@ function ws_ext_init(ext, emitter) {
             switch(ws_conn[_url].readyState) {
                 case 0:
                 case 1:
+                    callback();
                     return;
                 default:
                     //fall through
