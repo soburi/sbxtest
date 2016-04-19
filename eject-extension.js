@@ -1,11 +1,11 @@
 new (function() {
-    var ext_ = this;
+    let ext_ = this;
 
     // Extension name
-    var name = 'WebSocket Eject client extension';
+    let name = 'WebSocket Eject client extension';
 
     // Block and block menu descriptions
-    var descriptor = {
+    let descriptor = {
         blocks: [
             ['w', 'connect to %s', 'connect'],
             ['w', 'disconnect', 'disconnect'],
@@ -17,15 +17,15 @@ new (function() {
     };
 
 
-    var eject_ext_init = function(ext) {
+    let eject_ext_init = function(ext) {
 
         ext.send_eject = function() {
-            var data = {command: 'eject'};
+            let data = {command: 'eject'};
             ext.api.send(JSON.stringify(data), null);
         };
 
         ext.send_close = function() {
-            var data = {command: 'close'};
+            let data = {command: 'close'};
             ext.api.send(JSON.stringify(data), null);
         };
 
@@ -53,10 +53,10 @@ new (function() {
         ScratchExtensions.register(name, descriptor, ext);
     };
 
-    var scriptpath = document.currentScript.src.match(/.*\//);
+    let scriptpath = document.currentScript.src.match(/.*\//);
     $.getScript(scriptpath + 'ws-ext.js')
         .done( function(ws_ext, textStatus) {
-            var eventTarget = document.createDocumentFragment();
+            let eventTarget = document.createDocumentFragment();
             ws_ext_init(ext_, eventTarget);
             eject_ext_init(ext_);
         });
