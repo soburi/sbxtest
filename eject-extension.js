@@ -7,8 +7,8 @@ new (function() {
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            [ '', 'connect to %s', 'connect'],
-            [ '', 'disconnect', 'disconnect'],
+            ['w', 'connect to %s', 'connect'],
+            ['w', 'disconnect', 'disconnect'],
             [ '', '(☝ ՞ਊ ՞)☝', 'send_eject'],
             [ '', 'close drive', 'send_close'],
             ['h', 'when disc ejected', 'onDiskEjected'],
@@ -29,23 +29,25 @@ new (function() {
             ext.api.send(JSON.stringify(data), null);
         };
 
-        ext.onDiskEjected = function() {
-            var ws = ext.api.getConnection(null);
-            if(JSON.parse(ws.message.data).command == 'eject' && ws.message.onDiscEjectedCheck != true) {
-                ws.message.onDiscEjectedCheck = true;
-                return true;
+	let prev_state = '';
+	let curr_state = '';
+	
+        ext.api.addEventListener('message-received', function(event) {
+            let recv = JSON.parse(event.data);
+            if(recv.command != undefined) {
+		curr_state = recv.command;
             }
-            return false;
-        };
+        });
 
-        ext.onDriveClosed = function() {
-            var ws = ext.api.getConnection(null);
-            if(JSON.parse(ws.message.data).command == 'close' && ws.message.onDriveClosedCheck != true) {
-                ws.message.onDriveClosedCheck = true;
+	let state_check = function(check_state) {
+	    if(prev_state != curr_state && curr_state == check_state) {
+		prev_state = curr_state;
                 return true;
             }
             return false;
         };
+        ext.onDiskEjected = function() { return state_check('eject'); }
+        ext.onDriveClosed = function() { return state_check('close'); }
 
         // Register the extension
         ScratchExtensions.register(name, descriptor, ext);
