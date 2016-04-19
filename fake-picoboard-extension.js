@@ -40,7 +40,7 @@ new (function() {
 
         let state_cache = {};
 
-        ext.api.setInternalProcessEventHook( function(event) {
+        ext.api.setInternalEventCheckHook( function(event) {
             return true;
         });
 

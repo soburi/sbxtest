@@ -31,7 +31,11 @@ new (function() {
 
 	let prev_state = '';
 	let curr_state = '';
-	
+
+        ext.api.setInternalEventCheckHook( function(event) {
+            return true;
+        });
+
         ext.api.addEventListener('message-received', function(event) {
             let recv = JSON.parse(event.data);
             if(recv.command != undefined) {
