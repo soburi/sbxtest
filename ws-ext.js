@@ -5,6 +5,8 @@ function ws_ext_init(ext, emitter) {
     let timeout_duration = 1000;
     let status_ = {status: 2, msg: 'Ready'};
 
+    ext.api = {};
+
     // util functions
 
     received_events.unchecked = function() {
@@ -31,7 +33,7 @@ function ws_ext_init(ext, emitter) {
         return msg;
     }.bind(ws_conn);
 
-    ext.getConnection = function(_k) {
+    ext.api.getConnection = function(_k) {
         let ret = ws_conn[_k];
         if(ret != undefined)
             return ret;
@@ -44,7 +46,7 @@ function ws_ext_init(ext, emitter) {
         return null;
     };
 
-    ext.disposeEvent = function(e) {
+    ext.api.disposeEvent = function(e) {
         let i=0;
         for(i=0; i<received_events.length; i++) {
             if(received_events[i] === e) {
@@ -54,19 +56,19 @@ function ws_ext_init(ext, emitter) {
         }
     };
 
-    ext.setErrorStatus = function(status, msg) {
+    ext.api.setErrorStatus = function(status, msg) {
         status_.status = status;
         status_.msg = msg;
     };
 
-    ext.setInternalEventCheckHook = function(fn) {
-        ext.isInternalProcessEvent = fn;
+    let isInternalProcessEvent = function(event) { return false; };
+    ext.api.setInternalEventCheckHook = function(fn) {
+        isInternalProcessEvent = fn;
     }
-    ext.setInternalEventCheckHook( function(event) { return false; } );
 
-    ext.addEventListener    = emitter.addEventListener.bind(emitter);
-    ext.removeEventListener = emitter.removeEventListener.bind(emitter);
-    ext.dispatchEvent       = emitter.dispatchEvent.bind(emitter);
+    ext.api.addEventListener    = emitter.addEventListener.bind(emitter);
+    ext.api.removeEventListener = emitter.removeEventListener.bind(emitter);
+    ext.api.dispatchEvent       = emitter.dispatchEvent.bind(emitter);
 
 
     // Scratch system facilities.
@@ -188,7 +190,7 @@ function ws_ext_init(ext, emitter) {
             if(received_events.length = received_events_length) {
                 received_events.shift();
             }
-            if( !ext.isInternalProcessEvent(event) ) {
+            if( !isInternalProcessEvent(event) ) {
                 received_events.push(event);
             }
             let evt = new MessageEvent('message-received',
@@ -199,14 +201,14 @@ function ws_ext_init(ext, emitter) {
                     srcElement: event.srcElement,
                     target: event.target
                 });
-            ext.dispatchEvent(evt);
+            ext.api.dispatchEvent(evt);
         });
 
     };
 
     ext.disconnect = function(arg0, arg1) {
         let disconnect_ = function(_url, callback) {
-            let ws = ext.getConnection(_url);
+            let ws = ext.api.getConnection(_url);
             if(ws == null) {
                 console.log("ext.disconnect: callback %s not yet init", _url);
                 callback();
@@ -233,10 +235,12 @@ function ws_ext_init(ext, emitter) {
     // Send and receive
 
     ext.send = function(data, _url) {
-        let ws = ext.getConnection(_url);
+        let ws = ext.api.getConnection(_url);
         console.log("ext.send: %s, %s %o", _url, ws.url, data);
         ws.send(data);
     };
+
+    ext.api.send = ext.send;
 
     ext.getMessage = function(_url) {
         console.log("ext.getMessage: %s", _url);

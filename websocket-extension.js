@@ -23,7 +23,8 @@ new (function() {
     var scriptpath = document.currentScript.src.match(/.*\//);
     $.getScript(scriptpath + 'ws-ext.js')
         .done( function(ws_ext, textStatus) {
-            ws_ext_init(ext_);
+            var eventTarget = document.createDocumentFragment();
+            ws_ext_init(ext_, eventTarget);
             ScratchExtensions.register(name, descriptor, ext_);
         });
 

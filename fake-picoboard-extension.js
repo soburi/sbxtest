@@ -40,11 +40,11 @@ new (function() {
 
         let state_cache = {};
 
-        ext.isInternalProcessEvent = function(event) {
+        ext.api.setInternalProcessEventHook( function(event) {
             return true;
-        };
+        });
 
-        ext.addEventListener('message-received', function(event) {
+        ext.api.addEventListener('message-received', function(event) {
             let recv = JSON.parse(event.data);
             if(recv.notify != undefined) {
 
@@ -79,7 +79,7 @@ new (function() {
 
         ext.onButtonChanged = function(prop) {
             //console.log("ext.onButtonChanged: %s", prop);
-            let ws = ext.getConnection(null);
+            let ws = ext.api.getConnection(null);
             if(ws == null) return false;
 
             let key = proptable[prop];
@@ -101,7 +101,7 @@ new (function() {
 
         ext.onSensorValueChanged = function(prop, lessmore, threshold) {
             //console.log("ext.onSensorValueChanged: %s %s %d", prop, lessmore, threshold);
-            let ws = ext.getConnection(null);
+            let ws = ext.api.getConnection(null);
             if(ws == null) return false;
 
             let key = proptable[prop];

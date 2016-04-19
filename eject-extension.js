@@ -21,16 +21,16 @@ new (function() {
 
         ext.send_eject = function() {
             var data = {command: 'eject'};
-            ext.send(JSON.stringify(data), null);
+            ext.api.send(JSON.stringify(data), null);
         };
 
         ext.send_close = function() {
             var data = {command: 'close'};
-            ext.send(JSON.stringify(data), null);
+            ext.api.send(JSON.stringify(data), null);
         };
 
         ext.onDiskEjected = function() {
-            var ws = ext.getConnection(null);
+            var ws = ext.api.getConnection(null);
             if(JSON.parse(ws.message.data).command == 'eject' && ws.message.onDiscEjectedCheck != true) {
                 ws.message.onDiscEjectedCheck = true;
                 return true;
@@ -39,7 +39,7 @@ new (function() {
         };
 
         ext.onDriveClosed = function() {
-            var ws = ext.getConnection(null);
+            var ws = ext.api.getConnection(null);
             if(JSON.parse(ws.message.data).command == 'close' && ws.message.onDriveClosedCheck != true) {
                 ws.message.onDriveClosedCheck = true;
                 return true;
@@ -54,7 +54,8 @@ new (function() {
     var scriptpath = document.currentScript.src.match(/.*\//);
     $.getScript(scriptpath + 'ws-ext.js')
         .done( function(ws_ext, textStatus) {
-            ws_ext_init(ext_);
+            var eventTarget = document.createDocumentFragment();
+            ws_ext_init(ext_, eventTarget);
             eject_ext_init(ext_);
         });
 
