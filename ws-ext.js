@@ -187,7 +187,7 @@ function ws_ext_init(ext, emitter) {
 
         ws.addEventListener('message', function(event) {
             console.log("%s: onmessage:", ws.url, event.data);
-            if(received_events.length = received_events_length) {
+            if(received_events.length == received_events_length) {
                 received_events.shift();
             }
             if( !isInternalProcessEvent(event) ) {
