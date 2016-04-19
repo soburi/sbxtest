@@ -247,7 +247,9 @@ function ws_ext_init(ext, emitter) {
         for(let i=0; i<received_events.length; i++) {
             if(received_events[i].checked != defined && received_events[i].target.url == _url) {
                 let r = received_events.splice(i, 1);
-                return r[0].data;
+                let ret = r[0].data;
+                console.log("ext.getMessage: ", ret);
+                return ret;
             }
         }
 
