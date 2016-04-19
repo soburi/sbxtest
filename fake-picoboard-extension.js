@@ -2,10 +2,10 @@ new (function() {
     let ext_ = this;
 
     // Extension name
-    let name = 'Fake-PicoBoard extension';
+    const name = 'Fake-PicoBoard extension';
 
     // Block and block menu descriptions
-    let descriptor = {
+    const descriptor = {
         blocks: [
             ['w', 'connect to %s', 'connect'],
             ['w', 'disconnect', 'disconnect'],
@@ -21,25 +21,24 @@ new (function() {
         },
     };
 
+    const proptable = {
+        'button pressed': "button",
+        'A connected': "connectorA",
+        'B connected': "connectorB",
+        'C connected': "connectorC",
+        'D connected': "connectorD",
+        'slider': "slider",
+        'light': "light",
+        'sound': "sound",
+        'resistance-A': "resistance-A",
+        'resistance-B': "resistance-B",
+        'resistance-C': "resistance-C",
+        'resistance-D': "resistance-D"
+    };
+
     let fake_picoboard_ext_init = function(ext) {
 
         let state_cache = {};
-
-        let proptable = {
-            'button pressed': "button",
-            'A connected': "connectorA",
-            'B connected': "connectorB",
-            'C connected': "connectorC",
-            'D connected': "connectorD",
-            'slider': "slider",
-            'light': "light",
-            'sound': "sound",
-            'resistance-A': "resistance-A",
-            'resistance-B': "resistance-B",
-            'resistance-C': "resistance-C",
-            'resistance-D': "resistance-D"
-        };
-
 
         ext.isInternalProcessEvent = function(event) {
             return true;
@@ -70,8 +69,6 @@ new (function() {
 
             let state = state_cache[key];
             if(state == undefined) return "";
-
-            if(state.value == undefined) return "";
             
             return state.value;
         };
@@ -133,7 +130,7 @@ new (function() {
     let scriptpath = document.currentScript.src.match(/.*\//);
     $.getScript(scriptpath + 'ws-ext.js')
         .done( function(ws_ext, textStatus) {
-            var eventTarget = document.currentScript;
+            var eventTarget = document.createDocumentFragment();
             ws_ext_init(ext_, eventTarget);
             fake_picoboard_ext_init(ext_);
         });

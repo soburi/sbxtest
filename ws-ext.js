@@ -5,30 +5,14 @@ function ws_ext_init(ext, emitter) {
     let timeout_duration = 1000;
     let status_ = {status: 2, msg: 'Ready'};
 
-    let getConnection = function(_k) {
-        let ret = this[_k];
-        if(ret != undefined)
-            return ret;
+    // util functions
 
-        for(let kk in this) {
-            if(kk.indexOf('://') != -1) {
-                return this[kk];
-            }
+    received_events.unchecked = function() {
+        for(let i=this.length-1; i>=0; i--) {
+            if(this[i].checked == undefined) return this[i];
         }
         return null;
-    }.bind(ws_conn);
-    ext.getConnection = getConnection;
-
-    let disposeEvent = function(e) {
-        let i=0;
-        for(i=0; i<received_events.length; i++) {
-            if(received_events[i] === e) {
-                received_events.splice(i, 1);
-                return;
-            }
-        }
-    }
-    ext.disposeEvent = disposeEvent;
+    }.bind(received_events);
 
     ws_conn.getErrorReason = function() {
         let msg = null;
@@ -47,22 +31,45 @@ function ws_ext_init(ext, emitter) {
         return msg;
     }.bind(ws_conn);
 
-    received_events.unchecked = function() {
-        for(let i=this.length-1; i>=0; i--) {
-            if(this[i].checked == undefined) return this[i];
+    ext.getConnection = function(_k) {
+        let ret = ws_conn[_k];
+        if(ret != undefined)
+            return ret;
+
+        for(let kk in ws_conn) {
+            if(kk.indexOf('://') != -1) {
+                return ws_conn[kk];
+            }
         }
         return null;
-    }.bind(received_events);
+    };
 
-    //var eventTarget = document.createDocumentFragment();
-    ext.addEventListener    = emitter.addEventListener.bind(emitter);
-    ext.removeEventListener = emitter.removeEventListener.bind(emitter);
-    ext.dispatchEvent       = emitter.dispatchEvent.bind(emitter);
+    ext.disposeEvent = function(e) {
+        let i=0;
+        for(i=0; i<received_events.length; i++) {
+            if(received_events[i] === e) {
+                received_events.splice(i, 1);
+                return;
+            }
+        }
+    };
+
+    ext.setErrorStatus = function(status, msg) {
+        status_.status = status;
+        status_.msg = msg;
+    };
 
     ext.setInternalEventCheckHook = function(fn) {
         ext.isInternalProcessEvent = fn;
     }
     ext.setInternalEventCheckHook( function(event) { return false; } );
+
+    ext.addEventListener    = emitter.addEventListener.bind(emitter);
+    ext.removeEventListener = emitter.removeEventListener.bind(emitter);
+    ext.dispatchEvent       = emitter.dispatchEvent.bind(emitter);
+
+
+    // Scratch system facilities.
 
     ext._shutdown = function() {
         for(k in ws_conn) ws_conn[k].close();
@@ -72,10 +79,7 @@ function ws_ext_init(ext, emitter) {
         return status_;
     };
 
-    ext.setErrorStatus = function(status, msg) {
-        status_.status = status;
-        status_.msg = msg;
-    };
+    // Connect and disconnect
 
     ext.connect = function(_url, callback) {
         console.log("ext.connect: %s %O", _url, callback);
@@ -141,25 +145,6 @@ function ws_ext_init(ext, emitter) {
             }
         });
         
-        ws.addEventListener('message', function(event) {
-            console.log("%s: onmessage:", ws.url, event.data);
-            if(received_events.length = received_events_length) {
-                received_events.shift();
-            }
-            if( !ext.isInternalProcessEvent(event) ) {
-                received_events.push(event);
-            }
-            let evt = new MessageEvent('message-received',
-                {
-                    data: event.data,
-                    origin: event.origin,
-                    currentTarget: event.currentTarget,
-                    srcElement: event.srcElement,
-                    target: event.target
-                });
-            ext.dispatchEvent(evt);
-        });
-        
         ws.addEventListener('close', function(event) {
                  if(event.code == 1001) reason = "1000: CLOSE_NORMAL";
             else if(event.code == 1001) reason = "1001: CLOSE_GOING_AWAY";
@@ -195,6 +180,26 @@ function ws_ext_init(ext, emitter) {
                 }
             }
         });
+
+        ws.addEventListener('message', function(event) {
+            console.log("%s: onmessage:", ws.url, event.data);
+            if(received_events.length = received_events_length) {
+                received_events.shift();
+            }
+            if( !ext.isInternalProcessEvent(event) ) {
+                received_events.push(event);
+            }
+            let evt = new MessageEvent('message-received',
+                {
+                    data: event.data,
+                    origin: event.origin,
+                    currentTarget: event.currentTarget,
+                    srcElement: event.srcElement,
+                    target: event.target
+                });
+            ext.dispatchEvent(evt);
+        });
+
     };
 
     ext.disconnect = function(arg0, arg1) {
@@ -222,6 +227,8 @@ function ws_ext_init(ext, emitter) {
         };
         disconnect_(  arg1==undefined ? null : arg0, arg1==undefined ? arg0 : arg1 );
     };
+
+    // Send and receive
 
     ext.send = function(data, _url) {
         let ws = ext.getConnection(_url);
