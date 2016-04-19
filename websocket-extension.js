@@ -9,7 +9,7 @@ new (function() {
             ['w', 'connect to %s', 'connect'],
             ['w', 'disconnect %s', 'disconnect'],
             [ '', 'send %s to %s', 'send'],
-            ['R', 'message from %s', 'getMessage'],
+            ['r', 'message from %s', 'getMessage'],
             ['r', 'message origin', 'getLastReceivedMessageOrigin'],
             ['h', 'when data received', 'onMessageReceived'],
 
