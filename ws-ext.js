@@ -94,8 +94,10 @@ function ws_ext_init(ext, emitter) {
             }
         }
 
+        let callbacked = false;
         let reason = "";
         let ws = null;
+
         try {
             ws = new WebSocket(_url);
             ws.message = null;
@@ -110,7 +112,6 @@ function ws_ext_init(ext, emitter) {
             return;
         }
 
-        let callbacked = false;
         setTimeout( function() {
             if(!callbacked) {
                 status_.status = 1;
