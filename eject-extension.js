@@ -31,13 +31,28 @@ new (function() {
             [ '', 'close drive', 'send_close'],
             ['h', 'when disc ejected', 'onDiskEjected'],
             ['h', 'when drive closed', 'onDriveClosed'],
+            ['',  'Stack', 'stack'],
+            ['r', 'Boolean', 'repoter'],
+            ['r', 'Repoter', 'repoter'],
+            ['',  'String argument %s', 'stack'],
+            ['r', 'Number argument %n', 'repoter'],
+            ['r', 'Menu argument %m.menuitem', 'repoter'],
+            ['r', 'Boolean argument %b', 'repoter'],
             ['b', 'invert %b', 'boolInvert'],
             ['B', 'async boolean', 'isAsyncBool'],
-        ]
+        ],
+	menus: {
+		menuitem: ['menu1', 'menu2']
+	}
     };
 
 
     let eject_ext_init = function(ext) {
+
+	ext.stack = function() {
+	};
+	ext.repoter = function() {
+	};
 
 	ext.boolInvert = function(arg) {
 		if(arg) {
