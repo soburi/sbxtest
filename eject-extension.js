@@ -31,6 +31,7 @@ new (function() {
             [ '', 'close drive', 'send_close'],
             ['h', 'when disc ejected', 'onDiskEjected'],
             ['h', 'when drive closed', 'onDriveClosed'],
+            ['h',  'Stack', 'hat'],
             ['',  'Stack', 'stack'],
             ['b', 'Boolean', 'repoter'],
             ['r', 'Repoter', 'repoter'],
@@ -47,6 +48,9 @@ new (function() {
 
     let eject_ext_init = function(ext) {
 
+	ext.hat = function() {
+		return false;
+	}
 	ext.stack = function() {
 	};
 	ext.repoter = function() {
