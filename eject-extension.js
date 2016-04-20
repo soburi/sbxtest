@@ -31,7 +31,7 @@ new (function() {
             [ '', 'close drive', 'send_close'],
             ['h', 'when disc ejected', 'onDiskEjected'],
             ['h', 'when drive closed', 'onDriveClosed'],
-            ['h',  'Stack', 'hat'],
+            ['h',  'Hat', 'hat'],
             ['',  'Stack', 'stack'],
             ['b', 'Boolean', 'repoter'],
             ['r', 'Repoter', 'repoter'],
