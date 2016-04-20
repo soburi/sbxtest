@@ -31,7 +31,7 @@ new (function() {
             [ '', 'close drive', 'send_close'],
             ['h', 'when disc ejected', 'onDiskEjected'],
             ['h', 'when drive closed', 'onDriveClosed'],
-            ['b', 'boolean', 'isBool'],
+            ['b', 'invert %b', 'boolInvert'],
             ['B', 'async boolean', 'isAsyncBool'],
         ]
     };
@@ -39,8 +39,13 @@ new (function() {
 
     let eject_ext_init = function(ext) {
 
-	ext.isBool = function() {
-		return true;
+	ext.boolInvert = function(arg) {
+		if(arg) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	};
 
 	ext.isAsyncBool = function(callback) {
