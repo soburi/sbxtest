@@ -32,14 +32,12 @@ new (function() {
             ['h', 'when disc ejected', 'onDiskEjected'],
             ['h', 'when drive closed', 'onDriveClosed'],
             ['',  'Stack', 'stack'],
-            ['r', 'Boolean', 'repoter'],
+            ['b', 'Boolean', 'repoter'],
             ['r', 'Repoter', 'repoter'],
             ['',  'String argument %s', 'stack'],
             ['r', 'Number argument %n', 'repoter'],
-            ['r', 'Menu argument %m.menuitem', 'repoter'],
             ['r', 'Boolean argument %b', 'repoter'],
-            ['b', 'invert %b', 'boolInvert'],
-            ['B', 'async boolean', 'isAsyncBool'],
+            ['r', 'Menu argument %m.menuitem', 'repoter'],
         ],
 	menus: {
 		menuitem: ['menu1', 'menu2']
