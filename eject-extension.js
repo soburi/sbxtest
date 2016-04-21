@@ -31,43 +31,12 @@ new (function() {
             [ '', 'close drive', 'send_close'],
             ['h', 'when disc ejected', 'onDiskEjected'],
             ['h', 'when drive closed', 'onDriveClosed'],
-            ['h',  'Hat', 'hat'],
-            ['',  'Stack', 'stack'],
-            ['b', 'Boolean', 'repoter'],
-            ['r', 'Repoter', 'repoter'],
-            ['',  'String argument %s', 'stack'],
-            ['r', 'Number argument %n', 'repoter'],
-            ['r', 'Boolean argument %b', 'repoter'],
-            ['r', 'Menu argument %m.menuitem', 'repoter'],
-        ],
-	menus: {
-		menuitem: ['menu1', 'menu2']
-	}
+        ]
     };
 
 
     let eject_ext_init = function(ext) {
-
-	ext.hat = function() {
-		return false;
-	}
-	ext.stack = function() {
-	};
-	ext.repoter = function() {
-	};
-
-	ext.boolInvert = function(arg) {
-		if(arg) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	};
-
-	ext.isAsyncBool = function(callback) {
-		callback(true);
-	};
+        let drive_state = '';
 
         ext.send_eject = function() {
             let data = {command: 'eject'};
@@ -79,29 +48,20 @@ new (function() {
             ext.api.send(JSON.stringify(data), null);
         };
 
-	let prev_state = '';
-	let curr_state = '';
-
         ext.api.setInternalEventCheckHook( function(event) {
             return true;
         });
 
         ext.api.addEventListener('message-received', function(event) {
             let recv = JSON.parse(event.data);
-            if(recv.command != undefined) {
-		curr_state = recv.command;
-            }
+            drive_state = recv.status;
         });
 
-	let state_check = function(check_state) {
-	    if(prev_state != curr_state && curr_state == check_state) {
-		prev_state = curr_state;
-                return true;
-            }
-            return false;
+        let state_check = function(expected_state) {
+            return (drive_state == expected_state);
         };
-        ext.onDiskEjected = function() { return state_check('eject'); }
-        ext.onDriveClosed = function() { return state_check('close'); }
+        ext.onDiskEjected = function() { return state_check('ejected'); }
+        ext.onDriveClosed = function() { return state_check('closed'); }
 
         // Register the extension
         ScratchExtensions.register(name, descriptor, ext);
