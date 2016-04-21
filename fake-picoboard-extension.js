@@ -95,13 +95,14 @@ new (function() {
         ext.onButtonChanged = function(prop) {
             //console.log("ext.onButtonChanged: %s", prop);
 
-            if(proptable[prop]  == undefined) return false;
-            if(state_cache[key] == undefined) return false;
-            if(last_probed[key] == undefined) return false;
-
             let key = proptable[prop];
+            if(proptable[prop]  == undefined) return false;
+
             let last_value = last_probed[key];
             let new_value = state_cache[key];
+            if(last_value == undefined) return false;
+            if( new_value == undefined) return false;
+
             last_probed[key] = new_value;
 
             if(last_value != new_value && new_value == true) {
@@ -114,13 +115,14 @@ new (function() {
         ext.onSensorValueChanged = function(prop, lessmore, threshold) {
             //console.log("ext.onSensorValueChanged: %s %s %d", prop, lessmore, threshold);
 
-            if(proptable[prop]  == undefined) return false;
-            if(state_cache[key] == undefined) return false;
-            if(last_probed[key] == undefined) return false;
-
             let key = proptable[prop];
+            if(proptable[prop]  == undefined) return false;
+
             let last_value = last_probed[key];
-            let new_value  = state_cache[key];
+            let new_value = state_cache[key];
+            if(last_value == undefined) return false;
+            if( new_value == undefined) return false;
+
             last_probed[key] = new_value;
 
             if(last_value != new_value) {
