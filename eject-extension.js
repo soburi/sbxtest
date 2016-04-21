@@ -41,11 +41,13 @@ new (function() {
         ext.send_eject = function() {
             let data = {command: 'eject'};
             ext.api.send(JSON.stringify(data), null);
+            drive_state = 'ejecting';
         };
 
         ext.send_close = function() {
             let data = {command: 'close'};
             ext.api.send(JSON.stringify(data), null);
+            drive_state = 'closing';
         };
 
         ext.api.setInternalEventCheckHook( function(event) {
