@@ -70,7 +70,7 @@ new (function() {
                 for(k in recv.notify) {
                     state_cache[k] = recv.notify[k];
                     if(last_probed[k] == undefined) {
-                        last_prbed[k] = recv.notify[k];
+                        last_probed[k] = recv.notify[k];
                     }
                 }
             }
