@@ -29,8 +29,8 @@ new (function() {
             ['w', 'disconnect', 'disconnect'],
             ['b', 'sensor %m.booleanSensor?', 'getSensorBoolValue'],
             ['r', '%m.sensor sensor value', 'getSensorValue'],
-            ['h', 'when %m.booleanSensor', 'onButtonChanged'],
-            ['h', 'when %m.sensor %m.lessMore %n', 'onSensorValueChanged'],
+            ['h', 'when %m.booleanSensor', 'isButtonPressed'],
+            ['h', 'when %m.sensor %m.lessMore %n', 'compareSensorValue'],
         ],
         menus: {
             lessMore: ['<', '>'],
@@ -83,7 +83,7 @@ new (function() {
             return (ext.getSensorValue(prop) ? true : false);
         };
 
-        ext.buttonPressed = function(prop) {
+        ext.isButtonPressed = function(prop) {
             let key = proptable[prop];
             let state = state_cache[key];
             if(state == true) {
@@ -93,7 +93,7 @@ new (function() {
             return false;
         };
 
-        ext.onSensorValueChanged = function(prop, lessmore, threshold) {
+        ext.compareSensorValue = function(prop, lessmore, threshold) {
             let key = proptable[prop];
             let state = state_cache[key];
             if( (lessmore == '<') && (state < threshold)  ||
