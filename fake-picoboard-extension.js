@@ -57,6 +57,7 @@ new (function() {
     let fake_picoboard_ext_init = function(ext) {
 
         let state_cache = {};
+        let last_probed = {};
 
         ext.api.setInternalEventCheckHook( function(event) {
             return true;
@@ -67,14 +68,10 @@ new (function() {
             if(recv.notify != undefined) {
 
                 for(k in recv.notify) {
-                    let state = state_cache[k];
-                    if(state != null) {
-                        state_cache[k].value = recv.notify[k];
+                    state_cache[k] = recv.notify[k];
+                    if(last_probed[k] == undefined) {
+                        last_prbed[k] = recv.notify[k];
                     }
-                    else {
-                        state_cache[k] = { last_probed: recv.notify[k], value: recv.notify[k] };
-                    }
-
                 }
             }
         });
@@ -97,20 +94,17 @@ new (function() {
 
         ext.onButtonChanged = function(prop) {
             //console.log("ext.onButtonChanged: %s", prop);
-            let ws = ext.api.getConnection(null);
-            if(ws == null) return false;
+
+            if(proptable[prop]  == undefined) return false;
+            if(state_cache[key] == undefined) return false;
+            if(last_probed[key] == undefined) return false;
 
             let key = proptable[prop];
-            if(key == undefined) return false;
+            let last_value = last_probed[key];
+            let new_value = state_cache[key];
+            last_probed[key] = new_value;
 
-            let state = state_cache[key];
-            if(state == undefined) return false;
-
-            let last_probed = state.last_probed;
-            let new_value = state.value;
-            state_cache[key].last_probed = state.value;
-
-            if(last_probed != new_value && new_value == true) {
+            if(last_value != new_value && new_value == true) {
                 return true;
             }
 
@@ -119,22 +113,19 @@ new (function() {
 
         ext.onSensorValueChanged = function(prop, lessmore, threshold) {
             //console.log("ext.onSensorValueChanged: %s %s %d", prop, lessmore, threshold);
-            let ws = ext.api.getConnection(null);
-            if(ws == null) return false;
+
+            if(proptable[prop]  == undefined) return false;
+            if(state_cache[key] == undefined) return false;
+            if(last_probed[key] == undefined) return false;
 
             let key = proptable[prop];
-            if(key == undefined) return false;
+            let last_value = last_probed[key];
+            let new_value  = state_cache[key];
+            last_probed[key] = new_value;
 
-            let state = state_cache[key];
-            if(state == undefined) return false;
-
-            let last_probed = state.last_probed;
-            let new_value = state.value;
-            state_cache[prop].last_probed = state.value;
-
-            if(last_probed != new_value) {
-                if( (lessmore == '<' && last_probed >= threshold && new_value < threshold)  &&
-                    (lessmore == '>' && last_probed <= threshold && new_value > threshold) ) {
+            if(last_value != new_value) {
+                if( (lessmore == '<' && last_value >= threshold && new_value < threshold)  &&
+                    (lessmore == '>' && last_value <= threshold && new_value > threshold) ) {
                         return true;
                 }
             }
