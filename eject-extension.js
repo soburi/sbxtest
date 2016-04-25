@@ -36,19 +36,19 @@ new (function() {
 
 
     let eject_ext_init = function(ext) {
-        let drive_state = '';
 
         ext.send_eject = function() {
             let data = {command: 'eject'};
             ext.api.send(JSON.stringify(data), null);
-            drive_state = 'ejecting';
         };
 
         ext.send_close = function() {
             let data = {command: 'close'};
             ext.api.send(JSON.stringify(data), null);
-            drive_state = 'closing';
         };
+
+	let prev_state = '';
+	let curr_state = '';
 
         ext.api.setInternalEventCheckHook( function(event) {
             return true;
@@ -56,11 +56,17 @@ new (function() {
 
         ext.api.addEventListener('message-received', function(event) {
             let recv = JSON.parse(event.data);
-            drive_state = recv.status;
+            if(recv.status != undefined) {
+		curr_state = recv.status;
+            }
         });
 
-        let state_check = function(expected_state) {
-            return (drive_state == expected_state);
+	let state_check = function(check_state) {
+	    if(prev_state != curr_state && curr_state == check_state) {
+		prev_state = curr_state;
+                return true;
+            }
+            return false;
         };
         ext.onDiskEjected = function() { return state_check('ejected'); }
         ext.onDriveClosed = function() { return state_check('closed'); }

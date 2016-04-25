@@ -1,0 +1,16 @@
+{
+  "name": "eject-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "eject-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+  },
+  "dependencies" : {
+    "ws": "> 0"
+  },
+  "license": "GPL-2.0",
+  "description": "hoge"
+}
