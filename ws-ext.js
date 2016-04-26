@@ -16,6 +16,13 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/**
+ * Initialize WebSocket for Scratch Extension.
+ *
+ * @param ext {Object} Scratch extension object.
+ *            Accept any object that is able to append ws_ext api function .
+ * @param emitter {EventEmitter} EventEmitter instance.
+ */
 function ws_ext_init(ext, emitter) {
     let ws_conn = {};
     let received_events = [];
@@ -51,6 +58,12 @@ function ws_ext_init(ext, emitter) {
         return msg;
     }.bind(ws_conn);
 
+    /**
+     * Get WebSocket connection object.
+     *
+     * @param url {string} Find the WebSocket that is connected to this URL.
+     * @memberof ext.api
+     */
     ext.api.getConnection = function(_k) {
         let ret = ws_conn[_k];
         if(ret != undefined)
@@ -64,6 +77,13 @@ function ws_ext_init(ext, emitter) {
         return null;
     };
 
+    /**
+     * Remove processed event from queue.
+     *
+     * @param event {Event} Remove this event from receive queue.
+     *
+     * @memberof ext.api
+     */
     ext.api.disposeEvent = function(e) {
         let i=0;
         for(i=0; i<received_events.length; i++) {
@@ -74,18 +94,60 @@ function ws_ext_init(ext, emitter) {
         }
     };
 
+    /**
+     * Set Scratch Extension error status.
+     *
+     * @param status {int} Scratch Extension status.
+     * @param msg {string} Scratch Extension status.
+     *
+     * @memberof ext.api
+     */
     ext.api.setErrorStatus = function(status, msg) {
         status_.status = status;
         status_.msg = msg;
     };
 
+    /**
+     * Internal event check function.
+     * Internal event not queue for using by Scratch Block function.
+     *
+     * @callback {checkInternalProcessEvent}
+     * @param event {event}
+     * @returns {Boolean} Event is internal event, returns true.
+     *
+     * @memberof ext.api
+     */
     let isInternalProcessEvent = function(event) { return false; };
+
+    /**
+     * Set internal event cheking function.
+     *
+     * @param {checkInternalProcessEvent}
+     * @memberof ext.api
+     */
     ext.api.setInternalEventCheckHook = function(fn) {
         isInternalProcessEvent = fn;
     }
 
+    /**
+     * Emitter. addEventListener
+     *
+     * @memberof ext.api
+     */
     ext.api.addEventListener    = emitter.addEventListener.bind(emitter);
+
+    /**
+     * Emitter. removeEventListener
+     *
+     * @memberof ext.api
+     */
     ext.api.removeEventListener = emitter.removeEventListener.bind(emitter);
+
+    /**
+     * Emitter. dispatchEvent
+     *
+     * @memberof ext.api
+     */
     ext.api.dispatchEvent       = emitter.dispatchEvent.bind(emitter);
 
 
@@ -101,6 +163,14 @@ function ws_ext_init(ext, emitter) {
 
     // Connect and disconnect
 
+    /**
+     * Connect WebSocket to server.
+     *
+     * @param url {string} [Block argument] Server URL to connect.
+     * @param callback {function} Assign by Scratch.
+     *
+     * @memberof ext
+     */
     ext.connect = function(_url, callback) {
         console.log("ext.connect: %s %O", _url, callback);
         if(_url in ws_conn) {
@@ -166,7 +236,7 @@ function ws_ext_init(ext, emitter) {
                 callback();
             }
         });
-        
+
         ws.addEventListener('close', function(event) {
                  if(event.code == 1001) reason = "1000: CLOSE_NORMAL";
             else if(event.code == 1001) reason = "1001: CLOSE_GOING_AWAY";
@@ -224,6 +294,14 @@ function ws_ext_init(ext, emitter) {
 
     };
 
+    /**
+     * Disconnect WebSocket from server.
+     *
+     * @param url {string|null} [Block argument] Server URL to disconnect.
+     * @param callback {function} Assign by Scratch.
+     *
+     * @memberof ext
+     */
     ext.disconnect = function(arg0, arg1) {
         let disconnect_ = function(_url, callback) {
             let ws = ext.api.getConnection(_url);
@@ -252,14 +330,36 @@ function ws_ext_init(ext, emitter) {
 
     // Send and receive
 
+    /**
+     * Send data to WebSocker server.
+     *
+     * @param data  Send data.
+     * @param url {string}  Send data to this url.
+     *
+     * @memberof ext
+     */
     ext.send = function(data, _url) {
         let ws = ext.api.getConnection(_url);
         console.log("ext.send: %s, %s %o", _url, ws.url, data);
         ws.send(data);
     };
 
+    /**
+     *
+     * @alias send
+     *
+     * @memberof ext.api
+     */
     ext.api.send = ext.send;
 
+    /**
+     *
+     * @param key {string} URL to find the which has WebSocket connection to.
+     *
+     * @returns Return last received data. Return null if called before receiving message from the URL.
+     *
+     * @memberof ext
+     */
     ext.getMessage = function(_url) {
         console.log("ext.getMessage: %s", _url);
         for(let i=0; i<received_events.length; i++) {
@@ -272,17 +372,27 @@ function ws_ext_init(ext, emitter) {
             }
         }
 
-        return null; 
+        return null;
     };
 
+    /**
+     *
+     * @returns {string} Return URL of last message sender. Return null if called before receiving message.
+     * @memberof ext
+     */
     ext.getLastReceivedMessageOrigin = function() {
         console.log("ext.getLastReceivedMessageOrigin");
-        if(received_event.length == 0) 
+        if(received_event.length == 0)
             return null;
         else
             return received_event[0].origin;
     };
 
+    /**
+     *
+     * @returns {Boolean} Return true on message arrived.
+     * @memberof ext
+     */
     ext.onMessageReceived = function() {
         let chk = received_events.unchecked();
         if(chk != null) {
@@ -294,12 +404,28 @@ function ws_ext_init(ext, emitter) {
 
     // Tiny Json Library
 
+    /**
+     * Return empty JSON string (means "{}")
+     *
+     * @memberof ext
+     */
     ext.emptyObject = function() {
         console.log("ext.emptyObject");
         let obj = new Object();
         return JSON.stringify(obj);
     };
 
+    /**
+     * Add new property to JSON.
+     *
+     * @param propname {string} new JSON property name(key).
+     * @param value new JSON value
+     * @param jsonstr {string} String form of JSON.
+     *
+     * @returns {string} String form of JSON that was append new values to original JSON.
+     *
+     * @memberof ext
+     */
     ext.addJsonProperty = function(propname, propvalue, jsonstr) {
         console.log("ext.addJsonProperty: %s %s %o", propname, propvalue, jsonstr);
         let jsonobj = jsonstr;
@@ -311,6 +437,15 @@ function ws_ext_init(ext, emitter) {
         return JSON.stringify(jsonobj);
     };
 
+    /**
+     * Get property of JSON.
+     *
+     * @param propname {string} JSON property name(key).
+     * @param jsonstr {string} String form of JSON.
+     *
+     * @returns {string} Get property as string form of JSON.  If property not found, return null.
+     * @memberof ext
+     */
     ext.getJsonProperty = function(propname, jsonstr) {
         console.log("ext.getJsonProperty: %s %o", propname, jsonstr);
         let jsonobj = jsonstr;
@@ -331,3 +466,12 @@ function ws_ext_init(ext, emitter) {
 
     return ext;
 }
+
+/**
+ * @namespace ext
+ *
+ */
+/**
+ * @namespace ext.api
+ *
+ */
