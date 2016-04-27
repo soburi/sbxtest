@@ -30,7 +30,9 @@ function ws_ext_init(ext, emitter) {
     let timeout_duration = 1000;
     let status_ = {status: 2, msg: 'Ready'};
 
-    ext.api = {};
+    let basic_ext = ext;
+    let api = {};
+    ext.api = api;
 
     // util functions
 
@@ -62,9 +64,10 @@ function ws_ext_init(ext, emitter) {
      * Get WebSocket connection object.
      *
      * @param url {string} Find the WebSocket that is connected to this URL.
-     * @memberof ext.api
+     * @returns {WebSocket} WebSocket object.
+     * @memberof api
      */
-    ext.api.getConnection = function(_k) {
+    api.getConnection = function(_k) {
         let ret = ws_conn[_k];
         if(ret != undefined)
             return ret;
@@ -78,13 +81,13 @@ function ws_ext_init(ext, emitter) {
     };
 
     /**
-     * Remove processed event from queue.
+     * Emitter. Remove processed event from queue.
      *
      * @param event {Event} Remove this event from receive queue.
      *
-     * @memberof ext.api
+     * @memberof api
      */
-    ext.api.disposeEvent = function(e) {
+    api.disposeEvent = function(e) {
         let i=0;
         for(i=0; i<received_events.length; i++) {
             if(received_events[i] === e) {
@@ -100,9 +103,9 @@ function ws_ext_init(ext, emitter) {
      * @param status {int} Scratch Extension status.
      * @param msg {string} Scratch Extension status.
      *
-     * @memberof ext.api
+     * @memberof api
      */
-    ext.api.setErrorStatus = function(status, msg) {
+    api.setErrorStatus = function(status, msg) {
         status_.status = status;
         status_.msg = msg;
     };
@@ -111,44 +114,50 @@ function ws_ext_init(ext, emitter) {
      * Internal event check function.
      * Internal event not queue for using by Scratch Block function.
      *
-     * @callback {checkInternalProcessEvent}
+     * @callback {checkInternalProcessEventFunction}
      * @param event {event}
-     * @returns {Boolean} Event is internal event, returns true.
+     * @returns {Boolean} If event is internal event, returns true.
      *
-     * @memberof ext.api
+     * @memberof api
      */
     let isInternalProcessEvent = function(event) { return false; };
 
     /**
-     * Set internal event cheking function.
+     * Set internal event check function.
      *
-     * @param {checkInternalProcessEvent}
-     * @memberof ext.api
+     * @param fn {checkInternalProcessEventFunction} Predicate internal event.
+     * @memberof api
      */
-    ext.api.setInternalEventCheckHook = function(fn) {
+    api.setInternalEventCheckFunction = function(fn) {
         isInternalProcessEvent = fn;
     }
 
     /**
      * Emitter. addEventListener
      *
-     * @memberof ext.api
+     * @param listener A listener that receive 'message' event.
+     * @memberof api
+     * @function 
      */
-    ext.api.addEventListener    = emitter.addEventListener.bind(emitter);
+    api.addEventListener    = emitter.addEventListener.bind(emitter);
 
     /**
      * Emitter. removeEventListener
      *
-     * @memberof ext.api
+     * @param listener A listener that to remove,
+     * @memberof api
+     * @function 
      */
-    ext.api.removeEventListener = emitter.removeEventListener.bind(emitter);
+    api.removeEventListener = emitter.removeEventListener.bind(emitter);
 
     /**
      * Emitter. dispatchEvent
      *
-     * @memberof ext.api
+     * @param event {event} A event dispatch to listeners.
+     * @memberof api
+     * @function 
      */
-    ext.api.dispatchEvent       = emitter.dispatchEvent.bind(emitter);
+    api.dispatchEvent       = emitter.dispatchEvent.bind(emitter);
 
 
     // Scratch system facilities.
@@ -169,9 +178,9 @@ function ws_ext_init(ext, emitter) {
      * @param url {string} [Block argument] Server URL to connect.
      * @param callback {function} Assign by Scratch.
      *
-     * @memberof ext
+     * @memberof basic_ext
      */
-    ext.connect = function(_url, callback) {
+    basic_ext.connect = function(_url, callback) {
         console.log("ext.connect: %s %O", _url, callback);
         if(_url in ws_conn) {
             console.log("ext.connect: %s readyState:%d", _url, ws_conn[_url].readyState);
@@ -300,9 +309,9 @@ function ws_ext_init(ext, emitter) {
      * @param url {string|null} [Block argument] Server URL to disconnect.
      * @param callback {function} Assign by Scratch.
      *
-     * @memberof ext
+     * @memberof basic_ext
      */
-    ext.disconnect = function(arg0, arg1) {
+    basic_ext.disconnect = function(arg0, arg1) {
         let disconnect_ = function(_url, callback) {
             let ws = ext.api.getConnection(_url);
             if(ws == null) {
@@ -329,38 +338,36 @@ function ws_ext_init(ext, emitter) {
     };
 
     // Send and receive
-
+    //
     /**
      * Send data to WebSocker server.
      *
      * @param data  Send data.
      * @param url {string}  Send data to this url.
      *
-     * @memberof ext
+     * @memberof api
      */
-    ext.send = function(data, _url) {
+    api.send = function(data, _url) {
         let ws = ext.api.getConnection(_url);
         console.log("ext.send: %s, %s %o", _url, ws.url, data);
         ws.send(data);
     };
 
     /**
-     *
-     * @alias send
-     *
-     * @memberof ext.api
+     * @see api.send
+     * @memberof basic_ext
      */
-    ext.api.send = ext.send;
+    basic_ext.send = api.send;
 
     /**
      *
-     * @param key {string} URL to find the which has WebSocket connection to.
+     * @param key {string} [Block argument] URL to find the which has WebSocket connection to.
      *
-     * @returns Return last received data. Return null if called before receiving message from the URL.
+     * @returns Return {string|ArrayBuffer|Blob} last received data. Return null if called before receiving message from the URL.
      *
-     * @memberof ext
+     * @memberof basic_ext
      */
-    ext.getMessage = function(_url) {
+    basic_ext.getMessage = function(_url) {
         console.log("ext.getMessage: %s", _url);
         for(let i=0; i<received_events.length; i++) {
             console.log("ext.getMessage: %o", received_events[i]);
@@ -378,9 +385,9 @@ function ws_ext_init(ext, emitter) {
     /**
      *
      * @returns {string} Return URL of last message sender. Return null if called before receiving message.
-     * @memberof ext
+     * @memberof basic_ext
      */
-    ext.getLastReceivedMessageOrigin = function() {
+    basic_ext.getLastReceivedMessageOrigin = function() {
         console.log("ext.getLastReceivedMessageOrigin");
         if(received_event.length == 0)
             return null;
@@ -391,9 +398,9 @@ function ws_ext_init(ext, emitter) {
     /**
      *
      * @returns {Boolean} Return true on message arrived.
-     * @memberof ext
+     * @memberof basic_ext
      */
-    ext.onMessageReceived = function() {
+    basic_ext.onMessageReceived = function() {
         let chk = received_events.unchecked();
         if(chk != null) {
             chk.checked = true;
@@ -407,9 +414,9 @@ function ws_ext_init(ext, emitter) {
     /**
      * Return empty JSON string (means "{}")
      *
-     * @memberof ext
+     * @memberof api.json
      */
-    ext.emptyObject = function() {
+    api.json.emptyObject = function() {
         console.log("ext.emptyObject");
         let obj = new Object();
         return JSON.stringify(obj);
@@ -424,9 +431,9 @@ function ws_ext_init(ext, emitter) {
      *
      * @returns {string} String form of JSON that was append new values to original JSON.
      *
-     * @memberof ext
+     * @memberof api.json
      */
-    ext.addJsonProperty = function(propname, propvalue, jsonstr) {
+    api.json.addJsonProperty = function(propname, propvalue, jsonstr) {
         console.log("ext.addJsonProperty: %s %s %o", propname, propvalue, jsonstr);
         let jsonobj = jsonstr;
         if(jQuery.type(jsonstr) == 'string') {
@@ -444,9 +451,10 @@ function ws_ext_init(ext, emitter) {
      * @param jsonstr {string} String form of JSON.
      *
      * @returns {string} Get property as string form of JSON.  If property not found, return null.
-     * @memberof ext
+     * @memberof api.json
+     * @instance
      */
-    ext.getJsonProperty = function(propname, jsonstr) {
+    api.json.getJsonProperty = function(propname, jsonstr) {
         console.log("ext.getJsonProperty: %s %o", propname, jsonstr);
         let jsonobj = jsonstr;
         if(jQuery.type(jsonstr) == 'string') {
@@ -468,10 +476,11 @@ function ws_ext_init(ext, emitter) {
 }
 
 /**
- * @namespace ext
- *
+ * @namespace basic_ext
  */
 /**
- * @namespace ext.api
- *
+ * @namespace api
+ */
+/**
+ * @namespace api.json
  */
